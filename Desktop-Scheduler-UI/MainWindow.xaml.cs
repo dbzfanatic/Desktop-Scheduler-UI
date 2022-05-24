@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using MySql.Data.MySqlClient;
 
 namespace Desktop_Scheduler_UI
 {
@@ -59,6 +62,25 @@ namespace Desktop_Scheduler_UI
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            /*Char[] charArr = "Passw0rd!".ToCharArray();
+            System.Security.SecureString secString = new System.Security.SecureString();
+            foreach(char c in charArr)
+            {
+                secString.AppendChar(c);
+            }
+            secString.MakeReadOnly();*/
+            MySqlConnection con = new MySqlConnection(@"server=localhost;userid=sqlUser;password=Passw0rd!;database=client_schedule");//, new SqlCredential("sqlUser", secString));
+            con.Open();
+
+            if(con.ServerVersion != "8.0.25")
+            {
+                MessageBox.Show("MySQL Server must match lab environment. Please install version 8.0.25", "Version Mismatch");
+
+            }
         }
     }
 }
