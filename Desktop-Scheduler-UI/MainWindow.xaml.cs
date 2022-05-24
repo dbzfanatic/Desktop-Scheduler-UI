@@ -23,13 +23,29 @@ namespace Desktop_Scheduler_UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<String> supportedLanguages = new List<String> { "en-US", "fr-FR" };
         public MainWindow()
         {
             InitializeComponent();
+
             CultureInfo curCult = CultureInfo.CurrentCulture;
+            Assembly language = null;
+            
             if (curCult.ToString() != "en-US")
             {
-                Assembly language = Assembly.LoadFrom(".\\" + curCult.ToString() + "\\Desktop-Scheduler-UI.resources.dll");
+                try{
+                    language = Assembly.LoadFrom(".\\" + curCult.ToString() + "\\Desktop-Scheduler-UI.resources.dll"); //try to load the proper language DLL
+                }
+                catch(Exception e)
+                {
+                    String caption = "Exception";
+                    if (!supportedLanguages.Contains(curCult.ToString())) //check if language is supported, if not change the caption of the alert to be more clear
+                    {
+                        caption = "Unsupported Language";
+                    }
+                    MessageBox.Show("The following error occurred: \n" + e.ToString(),caption); //show error
+                    return;
+                }
                 ResourceManager rm = new ResourceManager(String.Format("Desktop_Scheduler_UI.Properties.Resources.{0}",curCult.ToString()), language);
                 lblPass.Content = rm.GetString("loginString");
                 lblUser.Content = rm.GetString("userString");
