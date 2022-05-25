@@ -24,4 +24,15 @@ namespace Desktop_Scheduler_UI
             InitializeComponent();
         }
     }
+
+    public class Week
+    {
+        public string Sunday { get; set; }
+        public string Monday { get; set; }
+        public string Tueday { get; set; }
+        public string Wednesday { get; set; }
+        public string Thursday { get; set; }
+        public string Friday { get; set; }
+        public string Saturday { get; set; }
+    }
 }
