@@ -22,6 +22,11 @@ namespace Desktop_Scheduler_UI
         public MainView()
         {
             InitializeComponent();
+            DateTime today = DateTime.Today;
+            Console.WriteLine(today.DayOfWeek);
+            List<Week> weeks = new List<Week>();
+            weeks.Add(new Week { Sunday = 1.ToString(), Monday = 2.ToString(), Tuesday = 3.ToString(), Wednesday = 4.ToString(), Thursday = 5.ToString(), Friday = 6.ToString(), Saturday = 7.ToString() });
+            dataGrid.ItemsSource = weeks;
         }
     }
 
@@ -29,7 +34,7 @@ namespace Desktop_Scheduler_UI
     {
         public string Sunday { get; set; }
         public string Monday { get; set; }
-        public string Tueday { get; set; }
+        public string Tuesday { get; set; }
         public string Wednesday { get; set; }
         public string Thursday { get; set; }
         public string Friday { get; set; }

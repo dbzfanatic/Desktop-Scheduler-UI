@@ -106,6 +106,10 @@ namespace Desktop_Scheduler_UI
                 {
                     txtError.Visibility = Visibility.Hidden;
                     //new window logic
+                    MainView mainView = new MainView();
+                    Application.Current.MainWindow = mainView; //set mainwindow to new window so when it closes the entire app closes
+                    mainView.Show();
+                    this.Close();
                 }
                 else
                 {
