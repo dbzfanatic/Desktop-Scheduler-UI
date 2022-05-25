@@ -27,6 +27,7 @@ namespace Desktop_Scheduler_UI
     public partial class MainWindow : Window
     {
         List<String> supportedLanguages = new List<String> { "en-US", "fr-FR" };
+        protected static MySqlConnection con;
         public MainWindow()
         {
             InitializeComponent();
@@ -50,13 +51,13 @@ namespace Desktop_Scheduler_UI
                     return;
                 }
                 ResourceManager rm = new ResourceManager(String.Format("Desktop_Scheduler_UI.Properties.Resources.{0}",curCult.ToString()), language);
-                lblPass.Content = rm.GetString("loginString");
+                lblPass.Content = rm.GetString("passString");
                 lblUser.Content = rm.GetString("userString");
                 txtWelcome.Text = rm.GetString("welcomeString");
                 btnExit.Content = rm.GetString("exitString");
                 btnLogin.Content = rm.GetString("loginString");
-
-            }
+                txtError.Text = rm.GetString("loginErrorString");
+            }            
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -66,20 +67,58 @@ namespace Desktop_Scheduler_UI
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            /*Char[] charArr = "Passw0rd!".ToCharArray();
-            System.Security.SecureString secString = new System.Security.SecureString();
-            foreach(char c in charArr)
-            {
-                secString.AppendChar(c);
-            }
-            secString.MakeReadOnly();*/
-            MySqlConnection con = new MySqlConnection(@"server=localhost;userid=sqlUser;password=Passw0rd!;database=client_schedule");//, new SqlCredential("sqlUser", secString));
-            con.Open();
+            databaseLogic();            
+        }
 
-            if(con.ServerVersion != "8.0.25")
+        private bool conVerChk(MySqlConnection con)
+        {
+            if (con.ServerVersion != "8.0.25")
             {
                 MessageBox.Show("MySQL Server must match lab environment. Please install version 8.0.25", "Version Mismatch");
+                return false; 
+            }
+            return true;
+        }
 
+        private bool tryLogin(String userName, String passWord)
+        {
+            MySqlCommand cmd = new MySqlCommand(String.Format("SELECT * FROM user WHERE userName='{0}' AND password='{1}'",userName,passWord),con);
+            String user = null;
+            try
+            {
+                user = cmd.ExecuteScalar().ToString();
+            }
+            catch
+            {
+                return false;
+            }            
+            return true;
+        }
+
+        private void databaseLogic()
+        {
+            con = new MySqlConnection(@"server=localhost;userid=sqlUser;password=Passw0rd!;database=client_schedule");//, new SqlCredential("sqlUser", secString));
+            con.Open();
+            
+            if (conVerChk(con))
+            {
+                if (tryLogin(txtUser.Text, txtPass.Password))
+                {
+                    txtError.Visibility = Visibility.Hidden;
+                    //new window logic
+                }
+                else
+                {
+                    txtError.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        private void txtPass_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter || e.Key == Key.Return)
+            {
+                databaseLogic();
             }
         }
     }

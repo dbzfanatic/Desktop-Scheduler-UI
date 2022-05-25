@@ -71,16 +71,6 @@ namespace Desktop_Scheduler_UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Desktop_Scheduler_UI_Background1 {
-            get {
-                object obj = ResourceManager.GetObject("Desktop_Scheduler_UI_Background1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to   Exit  .
         /// </summary>
         public static string exitString {

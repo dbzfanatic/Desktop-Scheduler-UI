@@ -36,7 +36,8 @@
         <Label x:Name="lblUser" Content="{Binding userString, Mode=OneWay}" Margin="0,130,0,0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="25"/>
         <Label x:Name="lblPass" Content="{Binding passString, Mode=OneWay}" Margin="5,195,0,0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="25" Grid.Column="0"/>
         <TextBox x:Name="txtUser" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,135,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="Auto"/>
-        <PasswordBox x:Name="txtPass" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,200,0,0" VerticalAlignment="Top" Width="Auto"/>
+        <PasswordBox x:Name="txtPass" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,200,0,0" VerticalAlignment="Top" Width="Auto" KeyUp="txtPass_KeyUp"/>
+        <TextBlock x:Name="txtError" Grid.Column="1" Margin="0,230,0,0" TextWrapping="Wrap" Text="{Binding loginErrorString, Mode=OneWay}" VerticalAlignment="Top" Foreground="#FFA02222" Visibility="Hidden"/>
 
     </Grid>
 </Window>
