@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using MySql.Data.MySqlClient;
+
 namespace Desktop_Scheduler_UI
 {
     /// <summary>
@@ -19,13 +21,18 @@ namespace Desktop_Scheduler_UI
     /// </summary>
     public partial class MainView : Window
     {
-        public MainView()
+        public MainView(MySqlConnection con)
         {
             InitializeComponent();
+
             DateTime today = DateTime.Today;
             DateTime first = new DateTime(today.Year,today.Month,1);
             List<Week> weeks = new List<Week>();
             String[] tempWeek = new String[7];
+
+            var sql = "SELECT appointment.contact, appointment.title,Time(appointment.start) FROM appointment inner join customer ON appointment.customerID = customer.customerId WHERE appointment.userId=1 and appointment.start between '" + today.Year + "-" + today.Month + "-" + "{0}' and '" + today.Year + "-" + today.Month + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
+
+
             if (first.DayOfWeek.ToString() == "Sunday")
             {
                 weeks.Add(new Week{Sunday = 1.ToString(), Monday = 2.ToString(), Tuesday = 3.ToString(), Wednesday = 4.ToString(), Thursday = 5.ToString(), Friday = 6.ToString(), Saturday = 7.ToString() });
@@ -51,31 +58,54 @@ namespace Desktop_Scheduler_UI
                 }
                 weeks.Add(new Week(tempWeek[0], tempWeek[1], tempWeek[2], tempWeek[3], tempWeek[4], tempWeek[5], tempWeek[6]));
             }
-            //if(today.Month.ToString() != "February")
-            //{
-                String[] nextWeek = new String[7];
-                int monthEnd = int.Parse(first.AddMonths(1).AddDays(-1).Day.ToString());
-                for (int w = 1; w < 5; w++)
+            String[] nextWeek = new String[7];
+            int monthEnd = int.Parse(first.AddMonths(1).AddDays(-1).Day.ToString());
+            for (int w = 1; w < 5; w++)
+            {
+                for (int i = 0; i < 7; i++)
                 {
-                    for (int i = 0; i < 7; i++)
+                    int nextDay = int.Parse(tempWeek[6]) + i + 1;                        
+                    if (nextDay < monthEnd+1)
                     {
-                        int nextDay = int.Parse(tempWeek[6]) + i + 1;                        
-                        if (nextDay < monthEnd+1)
-                        {
-                            nextWeek[i] = nextDay.ToString();
-                            //nextWeek[i] = nextWeek[i] + "\nTest";
-                        }
-                        else
-                        {
-                            nextWeek[i] = "";
-                        }
-                        
+                        nextWeek[i] = nextDay.ToString();
                     }
-                    tempWeek[6] = nextWeek[6];
-                    weeks.Add(new Week(nextWeek[0], nextWeek[1], nextWeek[2], nextWeek[3], nextWeek[4], nextWeek[5], nextWeek[6]));
+                    else
+                    {
+                        nextWeek[i] = "";
+                    }
+                        
                 }
-            //}
+                tempWeek[6] = nextWeek[6];
+                weeks.Add(new Week(nextWeek[0], nextWeek[1], nextWeek[2], nextWeek[3], nextWeek[4], nextWeek[5], nextWeek[6]));
+            }
             dataGrid.ItemsSource = weeks;
+            int dayOfMonth;
+            for(int i = 0; i < 5; i++)
+            {
+                String[] apptWeek = new string[7];
+                String[] curWeek = weeks[i].ToArray();
+                for (int d = 0; d < 7; d++)
+                {
+                    String curDay = curWeek[d];
+                    if (int.TryParse(curDay, out dayOfMonth))
+                    {
+                        apptWeek[d] = curDay;
+                        var cmd = new MySqlCommand(string.Format(sql, dayOfMonth), con);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+                        while (rdr.Read())
+                        {
+                            apptWeek[d] += "\n" + string.Format("{1} - {0}: {2}", rdr.GetString(1), rdr.GetString(0), rdr.GetString(2));
+                        }
+                        rdr.Close();
+                    }
+                    else
+                    {
+                        apptWeek[d] = curDay;
+                    }
+                    
+                }
+                weeks[i] = new Week(apptWeek[0], apptWeek[1], apptWeek[2], apptWeek[3], apptWeek[4], apptWeek[5], apptWeek[6]);
+            }
         }
     }
 
@@ -101,5 +131,11 @@ namespace Desktop_Scheduler_UI
         }
 
         public Week() { }
+
+        public String[] ToArray()
+        {
+            String[] days = new String[7] { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
+            return days;
+        }
     }
 }

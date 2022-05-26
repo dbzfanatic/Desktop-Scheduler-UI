@@ -86,7 +86,7 @@ namespace Desktop_Scheduler_UI
             String user = null;
             try
             {
-                user = cmd.ExecuteScalar().ToString();
+                user = cmd.ExecuteScalar().ToString(); //use executescalar because we only need to know if a record is found
             }
             catch
             {
@@ -106,7 +106,7 @@ namespace Desktop_Scheduler_UI
                 {
                     txtError.Visibility = Visibility.Hidden;
                     //new window logic
-                    MainView mainView = new MainView();
+                    MainView mainView = new MainView(con); //pass database connection to new window instead of opening a new one
                     Application.Current.MainWindow = mainView; //set mainwindow to new window so when it closes the entire app closes
                     mainView.Show();
                     this.Close();
