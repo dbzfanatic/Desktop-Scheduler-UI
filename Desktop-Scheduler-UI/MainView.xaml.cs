@@ -25,7 +25,6 @@ namespace Desktop_Scheduler_UI
             DateTime today = DateTime.Today;
             DateTime first = new DateTime(today.Year,today.Month,1);
             List<Week> weeks = new List<Week>();
-            //weeks.Add(new Week { Sunday = 1.ToString(), Monday = 2.ToString(), Tuesday = 3.ToString(), Wednesday = 4.ToString(), Thursday = 5.ToString(), Friday = 6.ToString(), Saturday = 7.ToString() });
             String[] tempWeek = new String[7];
             if (first.DayOfWeek.ToString() == "Sunday")
             {
@@ -37,15 +36,23 @@ namespace Desktop_Scheduler_UI
                 
                 for (int i = 0; i < 7; i++)
                 {
-                    if(first.AddDays(i).DayOfWeek.ToString() != "Sunday")
+                    if(first.AddDays(-i).DayOfWeek.ToString() != "Sunday")
                     {
                         tempWeek[i] = "";
+                    }
+                    else
+                    {
+                        for(int q = 0; q < 7-(i); q++)
+                        {
+                            tempWeek[i+q] = (q+1).ToString();
+                        }
+                        break;
                     }
                 }
                 weeks.Add(new Week(tempWeek[0], tempWeek[1], tempWeek[2], tempWeek[3], tempWeek[4], tempWeek[5], tempWeek[6]));
             }
-            if(today.Month.ToString() != "February")
-            {
+            //if(today.Month.ToString() != "February")
+            //{
                 String[] nextWeek = new String[7];
                 int monthEnd = int.Parse(first.AddMonths(1).AddDays(-1).Day.ToString());
                 for (int w = 1; w < 5; w++)
@@ -67,7 +74,7 @@ namespace Desktop_Scheduler_UI
                     tempWeek[6] = nextWeek[6];
                     weeks.Add(new Week(nextWeek[0], nextWeek[1], nextWeek[2], nextWeek[3], nextWeek[4], nextWeek[5], nextWeek[6]));
                 }
-            }
+            //}
             dataGrid.ItemsSource = weeks;
         }
     }
