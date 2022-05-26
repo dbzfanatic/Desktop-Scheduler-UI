@@ -78,7 +78,7 @@ namespace Desktop_Scheduler_UI
                 tempWeek[6] = nextWeek[6];
                 weeks.Add(new Week(nextWeek[0], nextWeek[1], nextWeek[2], nextWeek[3], nextWeek[4], nextWeek[5], nextWeek[6]));
             }
-            dataGrid.ItemsSource = weeks;
+
             int dayOfMonth;
             for(int i = 0; i < 5; i++)
             {
@@ -94,7 +94,7 @@ namespace Desktop_Scheduler_UI
                         MySqlDataReader rdr = cmd.ExecuteReader();
                         while (rdr.Read())
                         {
-                            apptWeek[d] += "\n" + string.Format("{1} - {0}: {2}", rdr.GetString(1), rdr.GetString(0), rdr.GetString(2));
+                            apptWeek[d] += "\n" + string.Format("{1} - {0}: {2}", rdr.GetString(1), rdr.GetString(0), DateTime.Parse(rdr.GetString(2)).ToLocalTime());
                         }
                         rdr.Close();
                     }
@@ -104,8 +104,16 @@ namespace Desktop_Scheduler_UI
                     }
                     
                 }
+                dataGrid.ItemsSource = null;
+                dataGrid.Items.Clear();
                 weeks[i] = new Week(apptWeek[0], apptWeek[1], apptWeek[2], apptWeek[3], apptWeek[4], apptWeek[5], apptWeek[6]);
             }
+            dataGrid.ItemsSource = weeks;
+        }
+
+        private void dataGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            dataGrid.RowHeight = this.Height / 5;
         }
     }
 

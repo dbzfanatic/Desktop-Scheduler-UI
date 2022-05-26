@@ -4,22 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop_Scheduler_UI"
-        xmlns:Properties="clr-namespace:Desktop_Scheduler_UI.Properties" x:Class="Desktop_Scheduler_UI.MainView"
+        xmlns:Properties="clr-namespace:Desktop_Scheduler_UI.Properties" x:Name="frmMainView" x:Class="Desktop_Scheduler_UI.MainView"
         mc:Ignorable="d"
         Title="{Binding titleString, Mode=OneWay}" Height="450" Width="800">
     <Window.DataContext>
         <Properties:Resources/>
     </Window.DataContext>
     <Grid>
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Height="420" Margin="399,0,-2,-1" VerticalAlignment="Top" Width="395" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" RowHeight="78" ColumnWidth="58" ScrollViewer.CanContentScroll="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="#FFF0F0F0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <DataGrid x:Name="dataGrid" Margin="0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" ScrollViewer.CanContentScroll="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="#FFF0F0F0" Grid.Column="1" AutoGenerateColumns="False" Grid.RowSpan="5" SizeChanged="dataGrid_SizeChanged" RowHeight="78" CanUserSortColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Sunday}" ClipboardContentBinding="{x:Null}" x:Name="Day1" Header="Sunday" CanUserResize="False" Width="55"/>
-                <DataGridTextColumn Binding="{Binding Monday}" ClipboardContentBinding="{x:Null}" x:Name="Day2" Header="Monday" CanUserResize="False" Width="55"/>
-                <DataGridTextColumn Binding="{Binding Tuesday}" ClipboardContentBinding="{x:Null}" x:Name="Day3" Header="Tuesday" CanUserResize="False" Width="55"/>
-                <DataGridTextColumn Binding="{Binding Wednesday}" ClipboardContentBinding="{x:Null}" x:Name="Day4" Header="Wednesday" CanUserResize="False" Width="55"/>
-                <DataGridTextColumn Binding="{Binding Thursday}" ClipboardContentBinding="{x:Null}" x:Name="Day5" Header="Thursday" CanUserResize="False" Width="55"/>
-                <DataGridTextColumn Binding="{Binding Friday}" ClipboardContentBinding="{x:Null}" x:Name="Day6" Header="Friday" CanUserResize="False" Width="55"/>
-                <DataGridTextColumn Binding="{Binding Saturday}" ClipboardContentBinding="{x:Null}" x:Name="Day7" Header="Saturday" CanUserResize="False" Width="55"/>
+                <DataGridTextColumn Binding="{Binding Sunday}" x:Name="Day1" Header="Sunday" CanUserResize="False" Width=".1428*"/>
+                <DataGridTextColumn Binding="{Binding Monday}" x:Name="Day2" Header="Monday" CanUserResize="False" Width=".1428*"/>
+                <DataGridTextColumn Binding="{Binding Tuesday}" x:Name="Day3" Header="Tuesday" CanUserResize="False" Width=".1428*"/>
+                <DataGridTextColumn Binding="{Binding Wednesday}" x:Name="Day4" Header="Wednesday" CanUserResize="False" Width=".1428*"/>
+                <DataGridTextColumn Binding="{Binding Thursday}" x:Name="Day5" Header="Thursday" CanUserResize="False" Width=".1428*"/>
+                <DataGridTextColumn Binding="{Binding Friday}" x:Name="Day6" Header="Friday" CanUserResize="False" Width=".1428*"/>
+                <DataGridTextColumn Binding="{Binding Saturday}" x:Name="Day7" Header="Saturday" CanUserResize="False" Width=".1428*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
