@@ -97,7 +97,7 @@ namespace Desktop_Scheduler_UI
 
         private void databaseLogic()
         {
-            con = new MySqlConnection(@"server=localhost;userid=sqlUser;password=Passw0rd!;database=client_schedule");//, new SqlCredential("sqlUser", secString));
+            con = new MySqlConnection(@"server=localhost;userid=sqlUser;password=Passw0rd!;database=client_schedule");//connection string in code is bad practice but easy for school and verification
             con.Open();
             
             if (conVerChk(con))
