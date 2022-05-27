@@ -5,23 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop_Scheduler_UI"
         mc:Ignorable="d"
-        Title="WeekView" Height="155" Width="1050" SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ScrollViewer.VerticalScrollBarVisibility="Disabled" VerticalAlignment="Top">
+        Title="WeekView" Height="505" Width="1050" SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ScrollViewer.VerticalScrollBarVisibility="Disabled" VerticalAlignment="Top">
     <Grid>
-        <DataGrid x:Name="dataGrid" Margin="0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" ScrollViewer.CanContentScroll="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="#FFF0F0F0" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserResizeColumns="False" ColumnHeaderHeight="25" IsReadOnly="True" FontSize="14" LostFocus="dataGrid_LostFocus" SelectionMode="Single" IsSynchronizedWithCurrentItem="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Sunday}" x:Name="Day1" Header="Sunday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
-                <DataGridTextColumn Binding="{Binding Monday}" x:Name="Day2" Header="Monday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
-                <DataGridTextColumn Binding="{Binding Tuesday}" x:Name="Day3" Header="Tuesday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
-                <DataGridTextColumn Binding="{Binding Wednesday}" x:Name="Day4" Header="Wednesday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
-                <DataGridTextColumn Binding="{Binding Thursday}" x:Name="Day5" Header="Thursday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
-                <DataGridTextColumn Binding="{Binding Friday}" x:Name="Day6" Header="Friday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
-                <DataGridTextColumn Binding="{Binding Saturday}" x:Name="Day7" Header="Saturday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
-            </DataGrid.Columns>
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="IsEnabled" Value="False"/>
+        <DataGrid ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" x:Name="dataGrid" Margin="0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" HorizontalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="White" CanUserSortColumns="False" CanUserResizeColumns="False" ColumnHeaderHeight="0" IsReadOnly="True" FontSize="14" LostFocus="dataGrid_LostFocus" RowHeaderWidth="60" RowHeight="60" HeadersVisibility="Row" AutoGenerateColumns="False">
+            <DataGrid.CellStyle>
+                <Style x:Name="ColumnWithScroll" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                <TextBox Text="{Binding Content.Text,RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True" Background="{Binding RelativeSource={RelativeSource TemplatedParent},Mode=OneWay}"/>
+                                
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
-            </DataGrid.RowStyle>
+            </DataGrid.CellStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="*" Binding="{Binding [1]}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+            </DataGrid.Columns>
+            <DataGrid.RowHeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type DataGridRow}},Path=Item[0]}"/>
+                </DataTemplate>
+            </DataGrid.RowHeaderTemplate>
         </DataGrid>
     </Grid>
 </Window>
