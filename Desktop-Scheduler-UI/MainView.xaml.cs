@@ -113,7 +113,19 @@ namespace Desktop_Scheduler_UI
 
         private void dataGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            dataGrid.RowHeight = this.Height / 5;
+            //dataGrid.RowHeight = this.Height / 5.1;
+        }
+
+        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var test = dataGrid.SelectedItems;
+            WeekView curWeek = new WeekView((Week)test[0]);
+            curWeek.Show();
+        }
+
+        private void frmMainView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            dataGrid.RowHeight = (Height-dataGrid.ColumnHeaderHeight) / 5;
         }
     }
 

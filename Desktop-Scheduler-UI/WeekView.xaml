@@ -1,0 +1,27 @@
+﻿<Window x:Name="frmWeekView" x:Class="Desktop_Scheduler_UI.WeekView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Desktop_Scheduler_UI"
+        mc:Ignorable="d"
+        Title="WeekView" Height="155" Width="1050" SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ScrollViewer.VerticalScrollBarVisibility="Disabled" VerticalAlignment="Top">
+    <Grid>
+        <DataGrid x:Name="dataGrid" Margin="0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" ScrollViewer.CanContentScroll="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="#FFF0F0F0" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserResizeColumns="False" ColumnHeaderHeight="25" IsReadOnly="True" FontSize="14" LostFocus="dataGrid_LostFocus" SelectionMode="Single" IsSynchronizedWithCurrentItem="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Sunday}" x:Name="Day1" Header="Sunday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
+                <DataGridTextColumn Binding="{Binding Monday}" x:Name="Day2" Header="Monday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
+                <DataGridTextColumn Binding="{Binding Tuesday}" x:Name="Day3" Header="Tuesday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
+                <DataGridTextColumn Binding="{Binding Wednesday}" x:Name="Day4" Header="Wednesday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
+                <DataGridTextColumn Binding="{Binding Thursday}" x:Name="Day5" Header="Thursday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
+                <DataGridTextColumn Binding="{Binding Friday}" x:Name="Day6" Header="Friday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
+                <DataGridTextColumn Binding="{Binding Saturday}" x:Name="Day7" Header="Saturday" CanUserResize="False" Width=".1428*" FontSize="10.8"/>
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+    </Grid>
+</Window>
