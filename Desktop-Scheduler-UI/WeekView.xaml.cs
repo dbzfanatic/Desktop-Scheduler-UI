@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using MySql.Data.MySqlClient;
+
 namespace Desktop_Scheduler_UI
 {
     /// <summary>
@@ -19,33 +22,38 @@ namespace Desktop_Scheduler_UI
     /// </summary>
     public partial class WeekView : Window
     {
-        public WeekView(Week curWeek)
+        public WeekView(Week curWeek, MySqlConnection con = null)
         {            
             InitializeComponent();
 
+            DateTime today = DateTime.Today;
+            var sql = "SELECT * FROM appointment inner join customer ON appointment.customerID = customer.customerId inner join address on customer.addressID = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId WHERE appointment.userId=1 and appointment.start between '" + today.Year + "-" + today.Month + "-" + "{0}' and '" + today.Year + "-" + today.Month + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
+
+
             String[] weekDays = new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-            String[] stringSplit;
-            curWeek.Thursday = curWeek.Thursday + curWeek.Thursday + curWeek.Thursday + curWeek.Thursday;
             String[] days = curWeek.ToArray();
             String[,] apptDays = new String[7,2];
             List<String[]> apptData = new List<String[]>();
+
+            int dayOfMonth;
             for(int i= 0; i < 7;i++)
             {
-                if (int.TryParse(days[i], out int trash))
+                String apptString = "";
+                if (!int.TryParse(days[i], out dayOfMonth))
                 {
-                    stringSplit = new String[] { days[i], "" };
-                }
-                else if (days[i] != "")
-                {
-                    stringSplit = (days[i]).Split(null, 2);
-                }
-                else
-                {
-                    stringSplit = new String[] { "", "" };
+                    dayOfMonth = int.Parse((days[i]).Split(null, 2)[0]);
                 }
 
-                apptDays[i,1] = stringSplit[1];
-                apptDays[i,0] = weekDays[i] + "\n" + stringSplit[0];
+                var cmd = new MySqlCommand(string.Format(sql, dayOfMonth), con);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    apptString += string.Format("{1} - {0}: {2}\t\tLocation: {3}: {6} {7}, {9} {8} {10}\t{4} for {5}\n", rdr.GetString(3), rdr.GetString(6), DateTime.Parse(rdr.GetString(9)).ToLocalTime(), rdr.GetString(5), rdr.GetString(7), rdr.GetString(16),rdr.GetString(24), rdr.GetString(25), rdr.GetString(27),rdr.GetString(34),rdr.GetString(41));
+                }
+                rdr.Close();
+
+                apptDays[i,1] = apptString;
+                apptDays[i,0] = weekDays[i] + "\n" + dayOfMonth;
                 apptData.Add(new String[] { apptDays[i, 0] , apptDays[i,1]});
             }
             dataGrid.ItemsSource = apptData;
@@ -58,8 +66,7 @@ namespace Desktop_Scheduler_UI
             {
                 if (dataGrid.Columns.Count > 0)
                 {
-                    /*((DataGridTextColumn)dataGrid.Columns[i]).FontSize = Width / 150;
-                    Height = dataGrid.Height + 25;*/
+                    //possibly adjust font size here
                 }
             }
         }

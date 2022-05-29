@@ -21,9 +21,11 @@ namespace Desktop_Scheduler_UI
     /// </summary>
     public partial class MainView : Window
     {
-        public MainView(MySqlConnection con)
+        MySqlConnection con;
+        public MainView(MySqlConnection conNew)
         {
             InitializeComponent();
+            con = conNew;
 
             DateTime today = DateTime.Today;
             DateTime first = new DateTime(today.Year,today.Month,1);
@@ -119,7 +121,7 @@ namespace Desktop_Scheduler_UI
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var test = dataGrid.SelectedItems;
-            WeekView curWeek = new WeekView((Week)test[0]);
+            WeekView curWeek = new WeekView((Week)test[0],con);
             curWeek.Show();
         }
 
