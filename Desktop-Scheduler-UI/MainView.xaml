@@ -15,17 +15,59 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        
-        <DataGrid x:Name="dataGrid" Margin="0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" ScrollViewer.CanContentScroll="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="#FFF0F0F0" Grid.Column="1" AutoGenerateColumns="False" Grid.RowSpan="5" SizeChanged="dataGrid_SizeChanged" RowHeight="78" CanUserSortColumns="False" CanUserResizeColumns="False" ColumnHeaderHeight="25" MouseDoubleClick="dataGrid_MouseDoubleClick" IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Sunday}" x:Name="Day1" Header="Sunday" CanUserResize="False" Width=".1428*" FontSize="10"/>
-                <DataGridTextColumn Binding="{Binding Monday}" x:Name="Day2" Header="Monday" CanUserResize="False" Width=".1428*" FontSize="10"/>
-                <DataGridTextColumn Binding="{Binding Tuesday}" x:Name="Day3" Header="Tuesday" CanUserResize="False" Width=".1428*" FontSize="10"/>
-                <DataGridTextColumn Binding="{Binding Wednesday}" x:Name="Day4" Header="Wednesday" CanUserResize="False" Width=".1428*" FontSize="10"/>
-                <DataGridTextColumn Binding="{Binding Thursday}" x:Name="Day5" Header="Thursday" CanUserResize="False" Width=".1428*" FontSize="10"/>
-                <DataGridTextColumn Binding="{Binding Friday}" x:Name="Day6" Header="Friday" CanUserResize="False" Width=".1428*" FontSize="10"/>
-                <DataGridTextColumn Binding="{Binding Saturday}" x:Name="Day7" Header="Saturday" CanUserResize="False" Width=".1428*" FontSize="10"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".0625*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <DataGrid x:Name="dataGrid" Margin="0,25,0,0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" ScrollViewer.CanContentScroll="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="#FFF0F0F0" AutoGenerateColumns="False" SizeChanged="dataGrid_SizeChanged" RowHeight="72" CanUserSortColumns="False" CanUserResizeColumns="False" ColumnHeaderHeight="25" MouseDoubleClick="dataGrid_MouseDoubleClick" IsReadOnly="True" MouseUp="dataGrid_MouseUp" Grid.Column="1" Grid.Row="1">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Sunday}" x:Name="Day1" Header="Sunday" CanUserResize="False" Width=".1428*" FontSize="10"/>
+                    <DataGridTextColumn Binding="{Binding Monday}" x:Name="Day2" Header="Monday" CanUserResize="False" Width=".1428*" FontSize="10"/>
+                    <DataGridTextColumn Binding="{Binding Tuesday}" x:Name="Day3" Header="Tuesday" CanUserResize="False" Width=".1428*" FontSize="10"/>
+                    <DataGridTextColumn Binding="{Binding Wednesday}" x:Name="Day4" Header="Wednesday" CanUserResize="False" Width=".1428*" FontSize="10"/>
+                    <DataGridTextColumn Binding="{Binding Thursday}" x:Name="Day5" Header="Thursday" CanUserResize="False" Width=".1428*" FontSize="10"/>
+                    <DataGridTextColumn Binding="{Binding Friday}" x:Name="Day6" Header="Friday" CanUserResize="False" Width=".1428*" FontSize="10"/>
+                    <DataGridTextColumn Binding="{Binding Saturday}" x:Name="Day7" Header="Saturday" CanUserResize="False" Width=".1428*" FontSize="10"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Label x:Name="lblMonth" Content="September" Grid.Column="1" HorizontalAlignment="Center" Margin="0" FontWeight="Bold"/>
+            <Button x:Name="btnMonthPrev" Content="&lt;" Grid.Column="1" HorizontalAlignment="Left" Margin="20,0,0,0" Width="15" Click="btnMonthPrev_Click"/>
+            <Button x:Name="btnMonthNext" Content="&gt;" Grid.Column="1" HorizontalAlignment="Left" Margin="360,0,0,0" Width="15" Click="btnMonthNext_Click"/>
+        </Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".875*"/>
+                <RowDefinition Height=".125*"/>
+            </Grid.RowDefinitions>
+            <DataGrid x:Name="dgCustomers" Margin="0" AutoGenerateColumns="False" CanUserReorderColumns="False" AddingNewItem="dgCustomers_AddingNewItem" MouseUp="dgCustomers_MouseUp" PreviewKeyDown="dgCustomers_PreviewKeyDown">
+                <DataGrid.Resources>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                    <Grid Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding customerID}" Header="Customer Number"/>
+                    <DataGridTextColumn Binding="{Binding customerName}" Header="Name"/>
+                    <DataGridCheckBoxColumn Binding="{Binding active}" Header="Active"/>
+                    <DataGridTextColumn Binding="{Binding address}" Header="Address"/>
+                    <DataGridTextColumn Binding="{Binding address2}" Header="Address Line 2"/>
+                    <DataGridTextColumn Binding="{Binding city}" Header="City"/>
+                    <DataGridTextColumn Binding="{Binding zip}" Header="Zip/Postal Code"/>
+                    <DataGridTextColumn Binding="{Binding country}" Header="Country"/>
+                    <DataGridTextColumn Binding="{Binding phone}" Header="Phone"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button x:Name="btnReport" Content="Appointments by Type" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="145" Click="btnReport_Click" Grid.Row="1"/>
+            <Button x:Name="btnAddApt" Content="Add Appointment" HorizontalAlignment="Left" Margin="255,15,0,0" VerticalAlignment="Top" Width="110" Grid.Row="1"/>
+        </Grid>
     </Grid>
 </Window>

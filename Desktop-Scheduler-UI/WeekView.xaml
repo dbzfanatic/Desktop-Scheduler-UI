@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop_Scheduler_UI"
         mc:Ignorable="d"
-        Title="WeekView" Height="505" Width="1050" SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ScrollViewer.VerticalScrollBarVisibility="Disabled" VerticalAlignment="Top">
+        Title="WeekView" Height="465" Width="1050" SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ScrollViewer.VerticalScrollBarVisibility="Disabled" VerticalAlignment="Top">
     <Grid>
-        <DataGrid ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" x:Name="dataGrid" Margin="0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" HorizontalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="White" CanUserSortColumns="False" CanUserResizeColumns="False" ColumnHeaderHeight="0" IsReadOnly="True" FontSize="14" LostFocus="dataGrid_LostFocus" RowHeaderWidth="60" RowHeight="60" HeadersVisibility="Row" AutoGenerateColumns="False">
+        <DataGrid ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" x:Name="dataGrid" Margin="0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" HorizontalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="White" CanUserSortColumns="False" CanUserResizeColumns="False" ColumnHeaderHeight="0" IsReadOnly="True" FontSize="14" LostFocus="dataGrid_LostFocus" RowHeaderWidth="80" RowHeight="60" HeadersVisibility="Row" AutoGenerateColumns="False">
             <DataGrid.CellStyle>
                 <Style x:Name="ColumnWithScroll" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Setter Property="Template">

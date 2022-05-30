@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -39,7 +40,7 @@ namespace Desktop_Scheduler_UI
             for(int i= 0; i < 7;i++)
             {
                 String apptString = "";
-                if (!int.TryParse(days[i], out dayOfMonth))
+                if (!int.TryParse(days[i], out dayOfMonth) && days[i] != "")
                 {
                     dayOfMonth = int.Parse((days[i]).Split(null, 2)[0]);
                 }
@@ -53,11 +54,12 @@ namespace Desktop_Scheduler_UI
                 rdr.Close();
 
                 apptDays[i,1] = apptString;
-                apptDays[i,0] = weekDays[i] + "\n" + dayOfMonth;
+                apptDays[i,0] = weekDays[i] + "\n" + Regex.Replace(dayOfMonth.ToString(),@"(?<!\d+)0(?!\d+)","");
                 apptData.Add(new String[] { apptDays[i, 0] , apptDays[i,1]});
             }
             dataGrid.ItemsSource = apptData;
 
+            this.Title = ("Week of " + apptData[0][0] + " - " + apptData[6][0]).Replace("\n"," ");
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
