@@ -28,7 +28,7 @@ namespace Desktop_Scheduler_UI
             InitializeComponent();
 
             DateTime today = DateTime.Today;
-            var sql = "SELECT * FROM appointment inner join customer ON appointment.customerID = customer.customerId inner join address on customer.addressID = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId WHERE appointment.userId=1 and appointment.start between '" + today.Year + "-" + today.Month + "-" + "{0}' and '" + today.Year + "-" + today.Month + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
+            var sql = "SELECT * FROM appointment inner join customer ON appointment.customerID = customer.customerId inner join address on customer.addressID = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId WHERE appointment.userId=1 and appointment.start between '" + MainView.curYear + "-" + MainView.curMonth + "-" + "{0}' and '" + MainView.curYear + "-" + MainView.curMonth + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
 
 
             String[] weekDays = new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
@@ -59,7 +59,7 @@ namespace Desktop_Scheduler_UI
             }
             dataGrid.ItemsSource = apptData;
 
-            this.Title = ("Week of " + apptData[0][0] + " - " + apptData[6][0]).Replace("\n"," ");
+            this.Title = ("Week of " + apptData[0][0].Replace("\n", " ") + " - " + apptData[6][0]).Replace("\n"," ");
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -24,11 +24,13 @@ namespace Desktop_Scheduler_UI
         MySqlConnection con;
         String[] Months = new String[12] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
         public static int curMonth = 1;
+        public static int curYear = 2022;
         public MainView(MySqlConnection conNew)
         {
             InitializeComponent();
             con = conNew;
             curMonth = DateTime.Today.Month;
+            curYear = DateTime.Today.Year;
 
             GetAppts(curMonth);
             GetCust();
@@ -138,13 +140,13 @@ namespace Desktop_Scheduler_UI
         private void GetAppts(int Month)
         {
             DateTime today = DateTime.Today;
-            DateTime first = new DateTime(today.Year, Month, 1);
+            DateTime first = new DateTime(curYear, Month, 1);
             List<Week> weeks = new List<Week>();
             String[] tempWeek = new String[7];
 
-            var sql = "SELECT appointment.contact, appointment.title,Time(appointment.start) FROM appointment inner join customer ON appointment.customerID = customer.customerId WHERE appointment.userId=1 and appointment.start between '" + today.Year + "-" + today.Month + "-" + "{0}' and '" + today.Year + "-" + today.Month + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
+            var sql = "SELECT appointment.contact, appointment.title,Time(appointment.start) FROM appointment inner join customer ON appointment.customerID = customer.customerId WHERE appointment.userId=1 and appointment.start between '" + curYear + "-" + curMonth + "-" + "{0}' and '" + curYear + "-" + curMonth + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
 
-            lblMonth.Content = Months[today.Month - 1];
+            lblMonth.Content = Months[curMonth - 1] + " " + curYear.ToString();
 
             dataGrid.ItemsSource = null;
             dataGrid.Items.Clear();
@@ -257,12 +259,22 @@ namespace Desktop_Scheduler_UI
         private void btnMonthPrev_Click(object sender, RoutedEventArgs e)
         {
             curMonth--;
+            if(curMonth < 1)
+            {
+                curMonth = 12;
+                curYear--;
+            }
             GetAppts(curMonth);
         }
 
         private void btnMonthNext_Click(object sender, RoutedEventArgs e)
         {
             curMonth++;
+            if(curMonth > 12)
+            {
+                curMonth = 1;
+                curYear++;
+            }
             GetAppts(curMonth);
         }
     }
