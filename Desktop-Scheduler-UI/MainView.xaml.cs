@@ -98,7 +98,7 @@ namespace Desktop_Scheduler_UI
 
         private void dgCustomers_AddingNewItem(object sender, AddingNewItemEventArgs e)
         {
-
+            GetCust();
         }
 
         private void dgCustomers_MouseUp(object sender, MouseButtonEventArgs e)
@@ -276,6 +276,11 @@ namespace Desktop_Scheduler_UI
                 curYear++;
             }
             GetAppts(curMonth);
+        }
+
+        private void btnSched_Click(object sender, RoutedEventArgs e)
+        {
+            String schedSQL = "select user.userName,start,end,location,contact,address.address,address.address2,city.city,address.postalCode,country.country from appointment inner join customer on appointment.customerId = customer.customerId inner join address on customer.addressId = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId inner join user on appointment.userId = user.userId order by user.userID,end desc";
         }
     }
 

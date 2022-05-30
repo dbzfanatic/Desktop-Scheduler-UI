@@ -68,6 +68,7 @@
             </DataGrid>
             <Button x:Name="btnReport" Content="Appointments by Type" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="145" Click="btnReport_Click" Grid.Row="1"/>
             <Button x:Name="btnAddApt" Content="Add Appointment" HorizontalAlignment="Left" Margin="255,15,0,0" VerticalAlignment="Top" Width="110" Grid.Row="1"/>
+            <Button x:Name="btnSched" Content="All Schedules" HorizontalAlignment="Left" Margin="165,18,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnSched_Click"/>
         </Grid>
     </Grid>
 </Window>
