@@ -66,9 +66,12 @@
                     <DataGridTextColumn Binding="{Binding phone}" Header="Phone"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <Button x:Name="btnReport" Content="Appointments by Type" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="145" Click="btnReport_Click" Grid.Row="1"/>
-            <Button x:Name="btnAddApt" Content="Add Appointment" HorizontalAlignment="Left" Margin="255,15,0,0" VerticalAlignment="Top" Width="110" Grid.Row="1"/>
-            <Button x:Name="btnSched" Content="All Schedules" HorizontalAlignment="Left" Margin="165,18,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnSched_Click"/>
+            <ComboBox x:Name="cmbReport" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="145" Height="20" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedIndex="0">
+                <ComboBoxItem Content="Appointments by Type"/>
+                <ComboBoxItem Content="All Schedules"/>
+            </ComboBox>
+            <Button x:Name="btnAddApt" Content="Appointment Manager" HorizontalAlignment="Left" Margin="255,15,0,0" VerticalAlignment="Top" Width="110" Grid.Row="1"/>
+            <Button x:Name="btnPrntRep" Content="Print Report" HorizontalAlignment="Left" Margin="160,15,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnPrntRep_Click"/>
         </Grid>
     </Grid>
 </Window>

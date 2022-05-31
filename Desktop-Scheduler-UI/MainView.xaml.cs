@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using System.Windows.Xps.Packaging;
 using MySql.Data.MySqlClient;
 
 namespace Desktop_Scheduler_UI
@@ -278,9 +279,129 @@ namespace Desktop_Scheduler_UI
             GetAppts(curMonth);
         }
 
-        private void btnSched_Click(object sender, RoutedEventArgs e)
+        private void reportMonthByType()
         {
-            String schedSQL = "select user.userName,start,end,location,contact,address.address,address.address2,city.city,address.postalCode,country.country from appointment inner join customer on appointment.customerId = customer.customerId inner join address on customer.addressId = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId inner join user on appointment.userId = user.userId order by user.userID,end desc";
+            String typeSQL = "select Count(type),type,Month(start) from appointment group by type,Month(start) order by Count(type) desc";
+                        
+            var cmdType = new MySqlCommand(typeSQL, con);
+            MySqlDataReader typeRDR = cmdType.ExecuteReader();
+            PrintDialog printing = new PrintDialog();
+            Paragraph para = new Paragraph();
+            para.FontFamily = new FontFamily("Courier New");
+            para.FontSize = 16;
+
+            para.Inlines.Add(new Bold(new Run() { Text = "Monthly Meetings by Type\n\n", FontSize = 48 }));
+
+            while (typeRDR.Read())
+            {
+                para.Inlines.Add(new Bold(new Run("Month: " + "\t\t" + Months[typeRDR.GetInt16(2)-1] + "\r")));
+                para.Inlines.Add(new Bold(new Run("Type:  " + "\t\t" + typeRDR.GetString(1) + "\r")));
+                para.Inlines.Add(new Bold(new Run("Count: " + "\t\t" + typeRDR.GetInt16(0) + "\r\r")));
+            }
+
+            typeRDR.Close();
+
+            String typePerMonthSQL = "select count(distinct type),Month(start) from appointment where Month(start) group by Month(start)";
+
+            cmdType = new MySqlCommand(typePerMonthSQL, con);
+            typeRDR = cmdType.ExecuteReader();
+            para.Inlines.Add("\r\r");
+            while (typeRDR.Read())
+            {
+                para.Inlines.Add(new Bold(new Run("Distinct appointment types in " + Months[typeRDR.GetInt16(1)-1] + ": \t\t" + typeRDR.GetInt16(0) + "\r")));
+            }
+
+            typeRDR.Close();
+
+            FlowDocument typeDoc = new FlowDocument(para);
+            typeDoc.ColumnWidth = printing.PrintableAreaWidth;
+            //typeDoc.TextAlignment = TextAlignment.Center;
+            typeDoc.Name = "Meeting_Type_by_Month_Report";
+            IDocumentPaginatorSource idpSource = typeDoc;
+            if ((bool)printing.ShowDialog())
+            {
+                printing.PrintDocument(idpSource.DocumentPaginator, "Printing Report");
+            }
+        }
+
+        private void btnPrntRep_Click(object sender, RoutedEventArgs e)
+        {
+            switch (cmbReport.SelectedIndex)
+            {
+                case 0:
+                    reportMonthByType();
+                    break;
+                case 1:
+                    reportAllScheduled();
+                    break;
+                case 2:
+                    //new report
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void reportAllScheduled()
+        {
+            String schedSQL = "select user.userName,Date(start),Time(start),Time(end),location,contact,address.address,address.address2,city.city,address.postalCode,country.country from appointment inner join customer on appointment.customerId = customer.customerId inner join address on customer.addressId = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId inner join user on appointment.userId = user.userId order by user.userID,end desc";
+
+            var cmdSched = new MySqlCommand(schedSQL, con);
+            MySqlDataReader schedRDR = cmdSched.ExecuteReader();
+
+            PrintDialog printing = new PrintDialog();
+            Paragraph para = new Paragraph();
+            para.FontFamily = new FontFamily("Courier New");
+            para.FontSize = 11;
+            ///////////////////////////Setup Report Layout/////////////////////////
+            para.Inlines.Add(new Bold(new Run() { Text = "Scheduling Report\n\n", FontSize = 48 }));
+            para.Inlines.Add(new Run("----------------------------------------------------------------------------------------------------------------------\r"));
+            para.Inlines.Add(new Run("|"));
+            para.Inlines.Add(new Bold(new Run("Consultant:")));
+            para.Inlines.Add(new Run("| |    "));
+            para.Inlines.Add(new Bold(new Run("Date:   ")));
+            para.Inlines.Add(new Run("| | "));
+            para.Inlines.Add(new Bold(new Run("Start Time: ")));
+            para.Inlines.Add(new Run("| | "));
+            para.Inlines.Add(new Bold(new Run("End Time: ")));
+            para.Inlines.Add(new Run("| |  "));
+            para.Inlines.Add(new Bold(new Run("Location:  ")));
+            para.Inlines.Add(new Run("| |  "));
+            para.Inlines.Add(new Bold(new Run("Contact:  ")));
+            para.Inlines.Add(new Run("| |         "));
+            para.Inlines.Add(new Bold(new Run("Address:    ")));
+            para.Inlines.Add(new Run("     |\r"));
+            ///////////////////////////Finish Report Layout/////////////////////////
+            while (schedRDR.Read())
+            {
+                String user = schedRDR.GetString(0);
+                String date = (schedRDR.GetString(1).Split())[0];
+                String start = DateTime.Parse(schedRDR.GetString(2)).ToLocalTime().ToString("hh:mm tt");
+                String end = DateTime.Parse(schedRDR.GetString(3)).ToLocalTime().ToString("hh:mm tt");
+                String loc = schedRDR.GetString(4);
+                String contact = schedRDR.GetString(5);
+                String address2 = schedRDR.GetString(7) != "" ? " " + schedRDR.GetString(7) + " " : " ";
+                String address = schedRDR.GetString(6) + address2 + schedRDR.GetString(8) + " " + schedRDR.GetString(9) + " " + schedRDR.GetString(10);
+
+                para.Inlines.Add(new Run("|" + user.PadRight(11).Substring(0,11) + "| |"));
+                para.Inlines.Add(new Run(date.PadRight(12).Substring(0, 12) + "| |"));
+                para.Inlines.Add(new Run(start.PadRight(13).Substring(0, 13) + "| |"));
+                para.Inlines.Add(new Run(end.PadRight(11).Substring(0, 11) + "| |"));
+                para.Inlines.Add(new Run(loc.PadRight(13).Substring(0, 13) + "| |"));
+                para.Inlines.Add(new Run(contact.PadRight(12).Substring(0, 12) + "| |"));
+                para.Inlines.Add(new Run(address.PadRight(26).Substring(0, 26) + "|\r"));
+            }
+            schedRDR.Close();
+            para.Inlines.Add(new Run("----------------------------------------------------------------------------------------------------------------------\r"));
+            FlowDocument schedDoc = new FlowDocument(para);
+            schedDoc.ColumnWidth = printing.PrintableAreaWidth;
+            schedDoc.TextAlignment = TextAlignment.Center;
+            schedDoc.Name = "Scheduling_Report";
+            IDocumentPaginatorSource idpSource = schedDoc;
+            if ((bool)printing.ShowDialog())
+            {
+                printing.PrintDocument(idpSource.DocumentPaginator, "Printing Scheduling Report");
+            }
         }
     }
 
