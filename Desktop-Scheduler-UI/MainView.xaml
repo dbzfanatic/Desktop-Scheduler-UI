@@ -69,6 +69,7 @@
             <ComboBox x:Name="cmbReport" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="145" Height="20" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedIndex="0">
                 <ComboBoxItem Content="Appointments by Type"/>
                 <ComboBoxItem Content="All Schedules"/>
+                <ComboBoxItem Content="Appointments by Country"/>
             </ComboBox>
             <Button x:Name="btnAddApt" Content="Appointment Manager" HorizontalAlignment="Left" Margin="255,15,0,0" VerticalAlignment="Top" Width="110" Grid.Row="1"/>
             <Button x:Name="btnPrntRep" Content="Print Report" HorizontalAlignment="Left" Margin="160,15,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnPrntRep_Click"/>

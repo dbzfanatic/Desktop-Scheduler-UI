@@ -335,7 +335,8 @@ namespace Desktop_Scheduler_UI
                     reportAllScheduled();
                     break;
                 case 2:
-                    //new report
+                    reportByCountry();
+                    Console.WriteLine("test");
                     break;
                 default:
                     break;
@@ -402,6 +403,12 @@ namespace Desktop_Scheduler_UI
             {
                 printing.PrintDocument(idpSource.DocumentPaginator, "Printing Scheduling Report");
             }
+        }
+
+        private void reportByCountry()
+        {
+            String countrySQL = "select Count(country),country from country inner join city on country.countryId = city.countryId inner join address on city.cityID = address.cityId inner join customer on address.addressId = customer.addressId inner join appointment on customer.customerId = appointment.customerId group by country order by count(country) desc";
+
         }
     }
 
