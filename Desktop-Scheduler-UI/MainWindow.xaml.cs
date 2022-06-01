@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
@@ -104,6 +105,8 @@ namespace Desktop_Scheduler_UI
             {
                 if (tryLogin(txtUser.Text, txtPass.Password))
                 {
+                    File.AppendAllText("signins-log.txt", string.Format("\nNew login detected: {0}", DateTime.Now.ToString()));  //automatically creates the file if it does not exist or opens it
+                   
                     txtError.Visibility = Visibility.Hidden;
                     //new window logic
                     MainView mainView = new MainView(con); //pass database connection to new window instead of opening a new one

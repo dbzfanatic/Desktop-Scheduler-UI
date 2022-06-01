@@ -31,6 +31,12 @@ namespace Desktop_Scheduler_UI
         public static int curMonth = 1;
         public static int curYear = 2022;
         public static ObservableCollection<Customer> customers;
+
+        public MainView()
+        {
+            InitializeComponent();
+        }
+
         public MainView(MySqlConnection conNew)
         {
             InitializeComponent();
@@ -38,17 +44,11 @@ namespace Desktop_Scheduler_UI
             curMonth = DateTime.Today.Month;
             curYear = DateTime.Today.Year;
             customers = new ObservableCollection<Customer>();
-            //customers.CollectionChanged += custListChange;
 
             GetAppts(curMonth);
             GetCust();
 
             
-        }
-
-        private void dataGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
         }
 
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -140,11 +140,6 @@ namespace Desktop_Scheduler_UI
                 
             }
             
-        }
-
-        private void btnReport_Click(object sender, RoutedEventArgs e)
-        {
-            string repGenSQL = "select Count(type),type,Month(start) from appointment group by type,Month(start) order by Count(type) desc";
         }
 
         private void GetAppts(int Month)
@@ -304,9 +299,15 @@ namespace Desktop_Scheduler_UI
 
             while (typeRDR.Read())
             {
-                para.Inlines.Add(new Bold(new Run("Month: " + "\t\t" + Months[typeRDR.GetInt16(2)-1] + "\r")));
-                para.Inlines.Add(new Bold(new Run("Type:  " + "\t\t" + typeRDR.GetString(1) + "\r")));
-                para.Inlines.Add(new Bold(new Run("Count: " + "\t\t" + typeRDR.GetInt16(0) + "\r\r")));
+                List<String> results = new List<String>();
+
+                results.Add(Months[typeRDR.GetInt16(2) - 1]);
+                results.Add(typeRDR.GetString(1));
+                results.Add(typeRDR.GetInt16(0).ToString());
+
+                para.Inlines.Add(new Bold(new Run("Month: " + "\t\t" + results[0] + "\r")));
+                para.Inlines.Add(new Bold(new Run("Type:  " + "\t\t" + results[1] + "\r")));
+                para.Inlines.Add(new Bold(new Run("Count: " + "\t\t" + results[2] + "\r\r")));
             }
 
             typeRDR.Close();
@@ -325,7 +326,6 @@ namespace Desktop_Scheduler_UI
 
             FlowDocument typeDoc = new FlowDocument(para);
             typeDoc.ColumnWidth = printing.PrintableAreaWidth;
-            //typeDoc.TextAlignment = TextAlignment.Center;
             typeDoc.Name = "Meeting_Type_by_Month_Report";
             IDocumentPaginatorSource idpSource = typeDoc;
             if ((bool)printing.ShowDialog())
@@ -385,22 +385,24 @@ namespace Desktop_Scheduler_UI
             ///////////////////////////Finish Report Layout/////////////////////////
             while (schedRDR.Read())
             {
-                string user = schedRDR.GetString(0);
-                string date = (schedRDR.GetString(1).Split())[0];
-                string start = DateTime.Parse(schedRDR.GetString(2)).ToLocalTime().ToString("hh:mm tt");
-                string end = DateTime.Parse(schedRDR.GetString(3)).ToLocalTime().ToString("hh:mm tt");
-                string loc = schedRDR.GetString(4);
-                string contact = schedRDR.GetString(5);
-                string address2 = schedRDR.GetString(7) != "" ? " " + schedRDR.GetString(7) + " " : " ";
-                string address = schedRDR.GetString(6) + address2 + schedRDR.GetString(8) + " " + schedRDR.GetString(9) + " " + schedRDR.GetString(10);
+                List<String> results = new List<String>();
+                results.Add(schedRDR.GetString(0));
+                results.Add((schedRDR.GetString(1).Split())[0]);
+                results.Add(DateTime.Parse(schedRDR.GetString(2)).ToLocalTime().ToString("hh:mm tt"));
+                results.Add(DateTime.Parse(schedRDR.GetString(3)).ToLocalTime().ToString("hh:mm tt"));
+                results.Add(schedRDR.GetString(4));
+                results.Add(schedRDR.GetString(5));
+                results.Add(schedRDR.GetString(7) != "" ? " " + schedRDR.GetString(7) + " " : " ");
+                results.Add(schedRDR.GetString(6) + results[6] + schedRDR.GetString(8) + " " + schedRDR.GetString(9) + " " + schedRDR.GetString(10));
 
-                para.Inlines.Add(new Run("|" + user.PadRight(11).Substring(0,11) + "| |"));
-                para.Inlines.Add(new Run(date.PadRight(12).Substring(0, 12) + "| |"));
-                para.Inlines.Add(new Run(start.PadRight(13).Substring(0, 13) + "| |"));
-                para.Inlines.Add(new Run(end.PadRight(11).Substring(0, 11) + "| |"));
-                para.Inlines.Add(new Run(loc.PadRight(13).Substring(0, 13) + "| |"));
-                para.Inlines.Add(new Run(contact.PadRight(12).Substring(0, 12) + "| |"));
-                para.Inlines.Add(new Run(address.PadRight(26).Substring(0, 26) + "|\r"));
+
+                para.Inlines.Add(new Run("|" + results[0].PadRight(11).Substring(0,11) + "| |"));
+                para.Inlines.Add(new Run(results[1].PadRight(12).Substring(0, 12) + "| |"));
+                para.Inlines.Add(new Run(results[2].PadRight(13).Substring(0, 13) + "| |"));
+                para.Inlines.Add(new Run(results[3].PadRight(11).Substring(0, 11) + "| |"));
+                para.Inlines.Add(new Run(results[4].PadRight(13).Substring(0, 13) + "| |"));
+                para.Inlines.Add(new Run(results[5].PadRight(12).Substring(0, 12) + "| |"));
+                para.Inlines.Add(new Run(results[7].PadRight(26).Substring(0, 26) + "|\r"));
             }
             schedRDR.Close();
             para.Inlines.Add(new Run("----------------------------------------------------------------------------------------------------------------------\r"));
@@ -419,24 +421,42 @@ namespace Desktop_Scheduler_UI
         {
             string countrySQL = "select Count(country),country from country inner join city on country.countryId = city.countryId inner join address on city.cityID = address.cityId inner join customer on address.addressId = customer.addressId inner join appointment on customer.customerId = appointment.customerId group by country order by count(country) desc";
 
+            var countryType = new MySqlCommand(countrySQL, con);
+            MySqlDataReader countryRDR = countryType.ExecuteReader();
+            PrintDialog printing = new PrintDialog();
+            Paragraph para = new Paragraph();
+            para.FontFamily = new FontFamily("Courier New");
+            para.FontSize = 16;
+
+            para.Inlines.Add(new Bold(new Run() { Text = "Appointments by Country\n\n", FontSize = 48 }));
+
+            while (countryRDR.Read())
+            {
+                List<String> results = new List<String>();
+
+                results.Add(countryRDR.GetString(1));
+                results.Add(countryRDR.GetInt16(0).ToString());
+
+                para.Inlines.Add(new Bold(new Run("Country:  " + "\t\t" + results[0] + "\r")));
+                para.Inlines.Add(new Bold(new Run("Count: " + "\t\t" + results[1] + "\r\r")));
+            }
+
+            countryRDR.Close();
+
+            FlowDocument typeDoc = new FlowDocument(para);
+            typeDoc.ColumnWidth = printing.PrintableAreaWidth;
+            typeDoc.Name = "Meeting_Number_by_Country_Report";
+            IDocumentPaginatorSource idpSource = typeDoc;
+            if ((bool)printing.ShowDialog())
+            {
+                printing.PrintDocument(idpSource.DocumentPaginator, "Printing Report");
+            }
+
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void ShowWeek_Click(object sender, RoutedEventArgs e)
         {
             dataGrid_MouseDoubleClick(null, null);
-        }
-
-        private void custListChange(object sender, NotifyCollectionChangedEventArgs args)
-        {
-            if (sender == dgCustomers)
-            {
-                
-            }
-        }
-
-        private void dgCustomers_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            
         }
 
         private void dgCustomers_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
@@ -474,19 +494,6 @@ namespace Desktop_Scheduler_UI
 
                 newTemp = e.Row.Item as Customer;
 
-                /*newTemp.customerName = (dgCustomers.Columns[1].GetCellContent(e.Row) as TextBlock).Text;
-                newTemp.active = ((dgCustomers.Columns[2].GetCellContent(e.Row) as CheckBox).IsChecked == true) ? 1 : 0;
-                newTemp.address = (dgCustomers.Columns[3].GetCellContent(e.Row) as TextBlock).Text;
-                newTemp.address2 = (dgCustomers.Columns[4].GetCellContent(e.Row) as TextBlock).Text;
-                newTemp.city = (dgCustomers.Columns[5].GetCellContent(e.Row) as TextBlock).Text;
-                newTemp.country = (dgCustomers.Columns[7].GetCellContent(e.Row) as TextBlock).Text;
-                newTemp.zip = int.Parse((dgCustomers.Columns[6].GetCellContent(e.Row) as TextBlock).Text);
-                newTemp.phone = (e.Row.Item as Customer).phone;
-
-                var custCMD = new MySqlCommand(string.Format(updateCustSQL, newTemp.customerName, newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test",newTemp.phone, int.Parse((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text),(e.Row.Item as Customer).addressID), con);
-                MySqlDataReader custRDR = (MySqlDataReader)custCMD.ExecuteScalar();*/
-
-                //custRDR.Close();
 
                 ///////////////////////////Begin Country Logic///////////////////////////
                 var custCMD = new MySqlCommand(string.Format(inUpCountrySQL, newTemp.country), con);
@@ -565,11 +572,6 @@ namespace Desktop_Scheduler_UI
 
                 GetCust();
             }
-
-        }
-
-        private void dgCustomers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
 
         }
     }
