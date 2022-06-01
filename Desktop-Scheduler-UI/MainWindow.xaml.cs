@@ -26,7 +26,7 @@ namespace Desktop_Scheduler_UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<String> supportedLanguages = new List<String> { "en-US", "fr-FR" };
+        List<string> supportedLanguages = new List<string> { "en-US", "fr-FR" };
         protected static MySqlConnection con;
         public MainWindow()
         {
@@ -42,7 +42,7 @@ namespace Desktop_Scheduler_UI
                 }
                 catch(Exception e)
                 {
-                    String caption = "Exception";
+                    string caption = "Exception";
                     if (!supportedLanguages.Contains(curCult.ToString())) //check if language is supported, if not change the caption of the alert to be more clear
                     {
                         caption = "Unsupported Language";
@@ -50,7 +50,7 @@ namespace Desktop_Scheduler_UI
                     MessageBox.Show("The following error occurred: \n" + e.ToString(),caption); //show error
                     return;
                 }
-                ResourceManager rm = new ResourceManager(String.Format("Desktop_Scheduler_UI.Properties.Resources.{0}",curCult.ToString()), language);
+                ResourceManager rm = new ResourceManager(string.Format("Desktop_Scheduler_UI.Properties.Resources.{0}",curCult.ToString()), language);
                 lblPass.Content = rm.GetString("passString");
                 lblUser.Content = rm.GetString("userString");
                 txtWelcome.Text = rm.GetString("welcomeString");
@@ -80,10 +80,10 @@ namespace Desktop_Scheduler_UI
             return true;
         }
 
-        private bool tryLogin(String userName, String passWord)
+        private bool tryLogin(string userName, string passWord)
         {
-            MySqlCommand cmd = new MySqlCommand(String.Format("SELECT * FROM user WHERE userName='{0}' AND password='{1}'",userName,passWord),con);
-            String user = null;
+            MySqlCommand cmd = new MySqlCommand(string.Format("SELECT * FROM user WHERE userName='{0}' AND password='{1}'",userName,passWord),con);
+            string user = null;
             try
             {
                 user = cmd.ExecuteScalar().ToString(); //use executescalar because we only need to know if a record is found

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,15 +26,18 @@ namespace Desktop_Scheduler_UI
     public partial class MainView : Window
     {
         MySqlConnection con;
-        String[] Months = new String[12] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+        string[] Months = new string[12] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
         public static int curMonth = 1;
         public static int curYear = 2022;
+        public static ObservableCollection<Customer> customers;
         public MainView(MySqlConnection conNew)
         {
             InitializeComponent();
             con = conNew;
             curMonth = DateTime.Today.Month;
             curYear = DateTime.Today.Year;
+            customers = new ObservableCollection<Customer>();
+            //customers.CollectionChanged += custListChange;
 
             GetAppts(curMonth);
             GetCust();
@@ -97,11 +103,6 @@ namespace Desktop_Scheduler_UI
             
         }
 
-        private void dgCustomers_AddingNewItem(object sender, AddingNewItemEventArgs e)
-        {
-            GetCust();
-        }
-
         private void dgCustomers_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if(e.OriginalSource is ScrollViewer)
@@ -135,7 +136,7 @@ namespace Desktop_Scheduler_UI
 
         private void btnReport_Click(object sender, RoutedEventArgs e)
         {
-            String repGenSQL = "select Count(type),type,Month(start) from appointment group by type,Month(start) order by Count(type) desc";
+            string repGenSQL = "select Count(type),type,Month(start) from appointment group by type,Month(start) order by Count(type) desc";
         }
 
         private void GetAppts(int Month)
@@ -143,7 +144,7 @@ namespace Desktop_Scheduler_UI
             DateTime today = DateTime.Today;
             DateTime first = new DateTime(curYear, Month, 1);
             List<Week> weeks = new List<Week>();
-            String[] tempWeek = new String[7];
+            string[] tempWeek = new string[7];
 
             var sql = "SELECT appointment.contact, appointment.title,Time(appointment.start) FROM appointment inner join customer ON appointment.customerID = customer.customerId WHERE appointment.userId=1 and appointment.start between '" + curYear + "-" + curMonth + "-" + "{0}' and '" + curYear + "-" + curMonth + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
 
@@ -177,7 +178,7 @@ namespace Desktop_Scheduler_UI
                 }
                 weeks.Add(new Week(tempWeek[0], tempWeek[1], tempWeek[2], tempWeek[3], tempWeek[4], tempWeek[5], tempWeek[6]));
             }
-            String[] nextWeek = new String[7];
+            string[] nextWeek = new string[7];
             int monthEnd = int.Parse(first.AddMonths(1).AddDays(-1).Day.ToString());
             for (int w = 1; w < 5; w++)
             {
@@ -201,11 +202,11 @@ namespace Desktop_Scheduler_UI
             int dayOfMonth;
             for (int i = 0; i < 5; i++)
             {
-                String[] apptWeek = new string[7];
-                String[] curWeek = weeks[i].ToArray();
+                string[] apptWeek = new string[7];
+                string[] curWeek = weeks[i].ToArray();
                 for (int d = 0; d < 7; d++)
                 {
-                    String curDay = curWeek[d];
+                    string curDay = curWeek[d];
                     if (int.TryParse(curDay, out dayOfMonth))
                     {
                         apptWeek[d] = curDay;
@@ -232,8 +233,8 @@ namespace Desktop_Scheduler_UI
 
         private void GetCust()
         {
-            List<Customer> customers = new List<Customer>();
-            String custSQL = "select * from customer inner join address on customer.addressId = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId";
+            customers.Clear();
+            string custSQL = "select * from customer inner join address on customer.addressId = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId";
             var custCMD = new MySqlCommand(custSQL, con);
             MySqlDataReader custRDR = custCMD.ExecuteReader();
             while (custRDR.Read())
@@ -255,6 +256,7 @@ namespace Desktop_Scheduler_UI
             }
             custRDR.Close();
             dgCustomers.ItemsSource = customers;
+            
         }
 
         private void btnMonthPrev_Click(object sender, RoutedEventArgs e)
@@ -281,7 +283,7 @@ namespace Desktop_Scheduler_UI
 
         private void reportMonthByType()
         {
-            String typeSQL = "select Count(type),type,Month(start) from appointment group by type,Month(start) order by Count(type) desc";
+            string typeSQL = "select Count(type),type,Month(start) from appointment group by type,Month(start) order by Count(type) desc";
                         
             var cmdType = new MySqlCommand(typeSQL, con);
             MySqlDataReader typeRDR = cmdType.ExecuteReader();
@@ -301,7 +303,7 @@ namespace Desktop_Scheduler_UI
 
             typeRDR.Close();
 
-            String typePerMonthSQL = "select count(distinct type),Month(start) from appointment where Month(start) group by Month(start)";
+            string typePerMonthSQL = "select count(distinct type),Month(start) from appointment where Month(start) group by Month(start)";
 
             cmdType = new MySqlCommand(typePerMonthSQL, con);
             typeRDR = cmdType.ExecuteReader();
@@ -345,7 +347,7 @@ namespace Desktop_Scheduler_UI
 
         private void reportAllScheduled()
         {
-            String schedSQL = "select user.userName,Date(start),Time(start),Time(end),location,contact,address.address,address.address2,city.city,address.postalCode,country.country from appointment inner join customer on appointment.customerId = customer.customerId inner join address on customer.addressId = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId inner join user on appointment.userId = user.userId order by user.userID,end desc";
+            string schedSQL = "select user.userName,Date(start),Time(start),Time(end),location,contact,address.address,address.address2,city.city,address.postalCode,country.country from appointment inner join customer on appointment.customerId = customer.customerId inner join address on customer.addressId = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId inner join user on appointment.userId = user.userId order by user.userID,end desc";
 
             var cmdSched = new MySqlCommand(schedSQL, con);
             MySqlDataReader schedRDR = cmdSched.ExecuteReader();
@@ -375,14 +377,14 @@ namespace Desktop_Scheduler_UI
             ///////////////////////////Finish Report Layout/////////////////////////
             while (schedRDR.Read())
             {
-                String user = schedRDR.GetString(0);
-                String date = (schedRDR.GetString(1).Split())[0];
-                String start = DateTime.Parse(schedRDR.GetString(2)).ToLocalTime().ToString("hh:mm tt");
-                String end = DateTime.Parse(schedRDR.GetString(3)).ToLocalTime().ToString("hh:mm tt");
-                String loc = schedRDR.GetString(4);
-                String contact = schedRDR.GetString(5);
-                String address2 = schedRDR.GetString(7) != "" ? " " + schedRDR.GetString(7) + " " : " ";
-                String address = schedRDR.GetString(6) + address2 + schedRDR.GetString(8) + " " + schedRDR.GetString(9) + " " + schedRDR.GetString(10);
+                string user = schedRDR.GetString(0);
+                string date = (schedRDR.GetString(1).Split())[0];
+                string start = DateTime.Parse(schedRDR.GetString(2)).ToLocalTime().ToString("hh:mm tt");
+                string end = DateTime.Parse(schedRDR.GetString(3)).ToLocalTime().ToString("hh:mm tt");
+                string loc = schedRDR.GetString(4);
+                string contact = schedRDR.GetString(5);
+                string address2 = schedRDR.GetString(7) != "" ? " " + schedRDR.GetString(7) + " " : " ";
+                string address = schedRDR.GetString(6) + address2 + schedRDR.GetString(8) + " " + schedRDR.GetString(9) + " " + schedRDR.GetString(10);
 
                 para.Inlines.Add(new Run("|" + user.PadRight(11).Substring(0,11) + "| |"));
                 para.Inlines.Add(new Run(date.PadRight(12).Substring(0, 12) + "| |"));
@@ -407,8 +409,152 @@ namespace Desktop_Scheduler_UI
 
         private void reportByCountry()
         {
-            String countrySQL = "select Count(country),country from country inner join city on country.countryId = city.countryId inner join address on city.cityID = address.cityId inner join customer on address.addressId = customer.addressId inner join appointment on customer.customerId = appointment.customerId group by country order by count(country) desc";
+            string countrySQL = "select Count(country),country from country inner join city on country.countryId = city.countryId inner join address on city.cityID = address.cityId inner join customer on address.addressId = customer.addressId inner join appointment on customer.customerId = appointment.customerId group by country order by count(country) desc";
 
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            dataGrid_MouseDoubleClick(null, null);
+        }
+
+        private void custListChange(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (sender == dgCustomers)
+            {
+                
+            }
+        }
+
+        private void dgCustomers_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            //Dispatcher.BeginInvoke
+        }
+
+        private void dgCustomers_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+
+            Console.WriteLine((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text);
+            Console.WriteLine((dgCustomers.Columns[1].GetCellContent(e.Row) as TextBlock).Text);
+            Console.WriteLine((dgCustomers.Columns[3].GetCellContent(e.Row) as TextBlock).Text);
+            Console.WriteLine((dgCustomers.Columns[4].GetCellContent(e.Row) as TextBlock).Text);
+            Console.WriteLine((dgCustomers.Columns[5].GetCellContent(e.Row) as TextBlock).Text);
+            Console.WriteLine((dgCustomers.Columns[6].GetCellContent(e.Row) as TextBlock).Text);
+            Console.WriteLine((dgCustomers.Columns[7].GetCellContent(e.Row) as TextBlock).Text);
+            Console.WriteLine((dgCustomers.Columns[8].GetCellContent(e.Row) as TextBlock).Text);
+
+            string newCustSQL = "INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}'); Select LAST_INSERT_ID();";
+            string newAddySQL = "INSERT INTO address (address,address2,cityId,postalCode,phone,createDate,CreatedBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}'); Select LAST_INSERT_ID();";
+            string newCitySQL = "INSERT INTO city (city,countryId,createDate,createdBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}'); Select LAST_INSERT_ID();";
+            string newCountrySQL = "INSERT INTO country (country,createDate,createdBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}'); Select LAST_INSERT_ID();";
+
+            string inUpCustSQL = "Select customerId,customerName,active from customer where customerName='{0}'";
+            string inUpAddySQL = "Select addressId,address,address2,postalCode,phone from address WHERE address = '{0}' and address2 = '{1}'";
+            string inUpCitySQL = "Select cityId,city from city where city = '{0}'";
+            string inUpCountrySQL = "Select countryId,country from country WHERE country='{0}'";
+
+            string updateCustSQL = "update customer set customerName='{0}', active='{1}', lastUpdate='{2}', lastUpdateBy='{3}' where customerId = {4};";
+
+            string countryID = "";
+            string cityID = "";
+            string addressID = "";
+            string customerID = "";
+
+            Customer newTemp = new Customer();
+
+            newTemp.customerName = (dgCustomers.Columns[1].GetCellContent(e.Row) as TextBlock).Text;
+            newTemp.active = ((dgCustomers.Columns[2].GetCellContent(e.Row) as CheckBox).IsChecked == true) ? 1 : 0;
+            newTemp.address = (dgCustomers.Columns[3].GetCellContent(e.Row) as TextBlock).Text;
+            newTemp.address2 = (dgCustomers.Columns[4].GetCellContent(e.Row) as TextBlock).Text;
+            newTemp.city = (dgCustomers.Columns[5].GetCellContent(e.Row) as TextBlock).Text;
+            newTemp.country = (dgCustomers.Columns[7].GetCellContent(e.Row) as TextBlock).Text;
+            newTemp.zip = int.Parse((dgCustomers.Columns[6].GetCellContent(e.Row) as TextBlock).Text);
+            newTemp.phone = (dgCustomers.Columns[8].GetCellContent(e.Row) as TextBlock).Text;
+
+            var custCMD = new MySqlCommand(string.Format(updateCustSQL, newTemp.customerName,newTemp.active,DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"),"test", int.Parse((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text)), con);
+            MySqlDataReader custRDR = (MySqlDataReader)custCMD.ExecuteScalar();
+            
+            //custRDR.Close();
+
+            ///////////////////////////Begin Country Logic///////////////////////////
+            custCMD = new MySqlCommand(string.Format(inUpCountrySQL, newTemp.country), con);
+            custRDR = custCMD.ExecuteReader();
+            while (custRDR.Read())
+            {
+                countryID = custRDR.GetString(0);
+            }
+            custRDR.Close();
+            if (!int.TryParse(countryID, out int trash))
+            {
+                custCMD = new MySqlCommand(string.Format(newCountrySQL, newTemp.country, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                countryID = custCMD.ExecuteScalar().ToString(); // get inserted country ID
+                
+                custRDR.Close();
+                
+            }
+            //////////////////////////End country logic///////////////////////
+
+            ///////////////////////////Begin City Logic///////////////////////////
+            custCMD = new MySqlCommand(string.Format(inUpCitySQL, newTemp.city), con);
+            custRDR = custCMD.ExecuteReader();
+            while (custRDR.Read())
+            {
+                cityID = custRDR.GetString(0);
+            }
+            custRDR.Close();
+            if (!int.TryParse(cityID, out trash))
+            {
+                custCMD = new MySqlCommand(string.Format(newCitySQL, newTemp.city,countryID, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                cityID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
+
+                custRDR.Close();
+
+            }
+            //////////////////////////End City logic///////////////////////
+
+            ///////////////////////////Begin Address Logic///////////////////////////
+            custCMD = new MySqlCommand(string.Format(inUpAddySQL, newTemp.address, newTemp.address2), con);
+            custRDR = custCMD.ExecuteReader();
+            while (custRDR.Read())
+            {
+                addressID = custRDR.GetString(0);
+            }
+            custRDR.Close();
+            if (!int.TryParse(addressID, out trash))
+            {
+                custCMD = new MySqlCommand(string.Format(newAddySQL, newTemp.address,newTemp.address2,cityID,newTemp.zip,newTemp.phone, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                addressID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
+
+                custRDR.Close();
+
+            }
+            //////////////////////////End Address logic///////////////////////
+
+            ///////////////////////////Begin Customer Logic///////////////////////////
+            custCMD = new MySqlCommand(string.Format(inUpCustSQL, newTemp.customerName), con);
+            custRDR = custCMD.ExecuteReader();
+            while (custRDR.Read())
+            {
+                customerID = custRDR.GetString(0);
+            }
+            custRDR.Close();
+            if (!int.TryParse(customerID, out trash))
+            {
+                custCMD = new MySqlCommand(string.Format(newCustSQL, newTemp.customerName, addressID,newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                customerID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
+
+                custRDR.Close();
+
+            }
+            //////////////////////////End Customer logic///////////////////////
+
+            GetCust();
+
+        }
+
+        private void dgCustomers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Customer row = (sender as DataGrid).Items.CurrentItem as Customer;
         }
     }
 
@@ -422,7 +568,7 @@ namespace Desktop_Scheduler_UI
         public string Friday { get; set; }
         public string Saturday { get; set; }
 
-        public Week(String sunday, String monday, String tuesday, String wednesday, String thursday, String friday, String saturday)
+        public Week(string sunday, string monday, string tuesday, string wednesday, string thursday, string friday, string saturday)
         {
             Sunday = sunday;
             Monday = monday;
@@ -435,9 +581,9 @@ namespace Desktop_Scheduler_UI
 
         public Week() { }
 
-        public String[] ToArray()
+        public string[] ToArray()
         {
-            String[] days = new String[7] { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
+            string[] days = new string[7] { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
             return days;
         }
     }
@@ -456,5 +602,11 @@ namespace Desktop_Scheduler_UI
         public int addressID { get; set; }
         public int countryID { get; set; }
         public int cityID { get; set; }
+
+        public string[] ToArray()
+        {
+            string[] custValues = new string[12] { customerID.ToString(), customerName, active.ToString(), address, address2, city, country, zip.ToString(), phone, addressID.ToString(), countryID.ToString(), cityID.ToString() };
+            return custValues;
+        }
     }
 }

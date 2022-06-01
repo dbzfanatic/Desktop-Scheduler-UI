@@ -31,15 +31,15 @@ namespace Desktop_Scheduler_UI
             var sql = "SELECT * FROM appointment inner join customer ON appointment.customerID = customer.customerId inner join address on customer.addressID = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId WHERE appointment.userId=1 and appointment.start between '" + MainView.curYear + "-" + MainView.curMonth + "-" + "{0}' and '" + MainView.curYear + "-" + MainView.curMonth + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
 
 
-            String[] weekDays = new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-            String[] days = curWeek.ToArray();
-            String[,] apptDays = new String[7,2];
-            List<String[]> apptData = new List<String[]>();
+            string[] weekDays = new string[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+            string[] days = curWeek.ToArray();
+            string[,] apptDays = new string[7,2];
+            List<string[]> apptData = new List<string[]>();
 
             int dayOfMonth;
             for(int i= 0; i < 7;i++)
             {
-                String apptString = "";
+                string apptString = "";
                 if (!int.TryParse(days[i], out dayOfMonth) && days[i] != "")
                 {
                     dayOfMonth = int.Parse((days[i]).Split(null, 2)[0]);
@@ -55,7 +55,7 @@ namespace Desktop_Scheduler_UI
 
                 apptDays[i,1] = apptString;
                 apptDays[i,0] = weekDays[i] + "\n" + Regex.Replace(dayOfMonth.ToString(),@"(?<!\d+)0(?!\d+)","");
-                apptData.Add(new String[] { apptDays[i, 0] , apptDays[i,1]});
+                apptData.Add(new string[] { apptDays[i, 0] , apptDays[i,1]});
             }
             dataGrid.ItemsSource = apptData;
 

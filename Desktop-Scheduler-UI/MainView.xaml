@@ -21,6 +21,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <DataGrid x:Name="dataGrid" Margin="0,25,0,0" CanUserResizeRows="False" RowDetailsVisibilityMode="Visible" AlternationCount="2" CanUserReorderColumns="False" ColumnWidth="58" ScrollViewer.CanContentScroll="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0" BorderBrush="{x:Null}" AlternatingRowBackground="#FFCBDEEC" Background="#FFF0F0F0" AutoGenerateColumns="False" SizeChanged="dataGrid_SizeChanged" RowHeight="72" CanUserSortColumns="False" CanUserResizeColumns="False" ColumnHeaderHeight="25" MouseDoubleClick="dataGrid_MouseDoubleClick" IsReadOnly="True" MouseUp="dataGrid_MouseUp" Grid.Column="1" Grid.Row="1">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Show this week's schedule" Click="MenuItem_Click"/>
+                        <MenuItem Header="Edit schedule"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Sunday}" x:Name="Day1" Header="Sunday" CanUserResize="False" Width=".1428*" FontSize="10"/>
                     <DataGridTextColumn Binding="{Binding Monday}" x:Name="Day2" Header="Monday" CanUserResize="False" Width=".1428*" FontSize="10"/>
@@ -40,7 +46,7 @@
                 <RowDefinition Height=".875*"/>
                 <RowDefinition Height=".125*"/>
             </Grid.RowDefinitions>
-            <DataGrid x:Name="dgCustomers" Margin="0" AutoGenerateColumns="False" CanUserReorderColumns="False" AddingNewItem="dgCustomers_AddingNewItem" MouseUp="dgCustomers_MouseUp" PreviewKeyDown="dgCustomers_PreviewKeyDown">
+            <DataGrid x:Name="dgCustomers" Margin="0" AutoGenerateColumns="False" CanUserReorderColumns="False" MouseUp="dgCustomers_MouseUp" PreviewKeyDown="dgCustomers_PreviewKeyDown" SelectionChanged="dgCustomers_SelectionChanged" RowEditEnding="dgCustomers_RowEditEnding">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="Template">
@@ -55,7 +61,7 @@
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding customerID}" Header="Customer Number"/>
+                    <DataGridTextColumn Binding="{Binding customerID}" Header="Customer Number" IsReadOnly="True"/>
                     <DataGridTextColumn Binding="{Binding customerName}" Header="Name"/>
                     <DataGridCheckBoxColumn Binding="{Binding active}" Header="Active"/>
                     <DataGridTextColumn Binding="{Binding address}" Header="Address"/>
