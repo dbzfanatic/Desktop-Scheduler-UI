@@ -46,7 +46,7 @@
                 <RowDefinition Height=".875*"/>
                 <RowDefinition Height=".125*"/>
             </Grid.RowDefinitions>
-            <DataGrid x:Name="dgCustomers" Margin="0" AutoGenerateColumns="False" CanUserReorderColumns="False" MouseUp="dgCustomers_MouseUp" PreviewKeyDown="dgCustomers_PreviewKeyDown" SelectionChanged="dgCustomers_SelectionChanged" RowEditEnding="dgCustomers_RowEditEnding">
+            <DataGrid x:Name="dgCustomers" Margin="0" AutoGenerateColumns="False" CanUserReorderColumns="False" MouseUp="dgCustomers_MouseUp" PreviewKeyDown="dgCustomers_PreviewKeyDown" SelectionChanged="dgCustomers_SelectionChanged" RowEditEnding="dgCustomers_RowEditEnding" CellEditEnding="dgCustomers_CellEditEnding">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="Template">
@@ -62,14 +62,14 @@
                 </DataGrid.Resources>
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding customerID}" Header="Customer Number" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding customerName}" Header="Name"/>
-                    <DataGridCheckBoxColumn Binding="{Binding active}" Header="Active"/>
-                    <DataGridTextColumn Binding="{Binding address}" Header="Address"/>
-                    <DataGridTextColumn Binding="{Binding address2}" Header="Address Line 2"/>
-                    <DataGridTextColumn Binding="{Binding city}" Header="City"/>
-                    <DataGridTextColumn Binding="{Binding zip}" Header="Zip/Postal Code"/>
-                    <DataGridTextColumn Binding="{Binding country}" Header="Country"/>
-                    <DataGridTextColumn Binding="{Binding phone}" Header="Phone"/>
+                    <DataGridTextColumn Binding="{Binding customerName, UpdateSourceTrigger=PropertyChanged}" Header="Name"/>
+                    <DataGridCheckBoxColumn Binding="{Binding active, UpdateSourceTrigger=PropertyChanged}" Header="Active"/>
+                    <DataGridTextColumn Binding="{Binding address, UpdateSourceTrigger=PropertyChanged}" Header="Address"/>
+                    <DataGridTextColumn Binding="{Binding address2, UpdateSourceTrigger=PropertyChanged}" Header="Address Line 2"/>
+                    <DataGridTextColumn Binding="{Binding city, UpdateSourceTrigger=PropertyChanged}" Header="City"/>
+                    <DataGridTextColumn Binding="{Binding zip, UpdateSourceTrigger=PropertyChanged}" Header="Zip/Postal Code"/>
+                    <DataGridTextColumn Binding="{Binding country, UpdateSourceTrigger=PropertyChanged}" Header="Country"/>
+                    <DataGridTextColumn Binding="{Binding phone, UpdateSourceTrigger=PropertyChanged}" Header="Phone"/>
                 </DataGrid.Columns>
             </DataGrid>
             <ComboBox x:Name="cmbReport" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="145" Height="20" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedIndex="0">

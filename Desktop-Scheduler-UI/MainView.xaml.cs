@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -123,15 +124,22 @@ namespace Desktop_Scheduler_UI
         {
             string delSQL = "DELETE FROM customer WHERE customerId = {0}";
             var grid = (DataGrid)sender;
-            if(e.Key == Key.Delete)
+            switch(e.Key) 
             {
-                foreach(var row in grid.SelectedItems)
-                {
-                    //delete rows and update database
-                    var delCMD = new MySqlCommand(string.Format(delSQL, (row as Customer).customerID),con);
-                    delCMD.ExecuteNonQuery();
-                }
+                case Key.Delete:
+                    foreach (var row in grid.SelectedItems)
+                    {
+                        //delete rows and update database
+                        var delCMD = new MySqlCommand(string.Format(delSQL, (row as Customer).customerID),con);
+                        delCMD.ExecuteNonQuery();
+                    }
+                    break;
+                case Key.Enter:
+
+                    break;
+                
             }
+            
         }
 
         private void btnReport_Click(object sender, RoutedEventArgs e)
@@ -428,133 +436,141 @@ namespace Desktop_Scheduler_UI
 
         private void dgCustomers_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            //Dispatcher.BeginInvoke
+            
         }
 
         private void dgCustomers_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-
-            Console.WriteLine((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text);
-            Console.WriteLine((dgCustomers.Columns[1].GetCellContent(e.Row) as TextBlock).Text);
-            Console.WriteLine((dgCustomers.Columns[3].GetCellContent(e.Row) as TextBlock).Text);
-            Console.WriteLine((dgCustomers.Columns[4].GetCellContent(e.Row) as TextBlock).Text);
-            Console.WriteLine((dgCustomers.Columns[5].GetCellContent(e.Row) as TextBlock).Text);
-            Console.WriteLine((dgCustomers.Columns[6].GetCellContent(e.Row) as TextBlock).Text);
-            Console.WriteLine((dgCustomers.Columns[7].GetCellContent(e.Row) as TextBlock).Text);
-            Console.WriteLine((dgCustomers.Columns[8].GetCellContent(e.Row) as TextBlock).Text);
-
-            string newCustSQL = "INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}'); Select LAST_INSERT_ID();";
-            string newAddySQL = "INSERT INTO address (address,address2,cityId,postalCode,phone,createDate,CreatedBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}'); Select LAST_INSERT_ID();";
-            string newCitySQL = "INSERT INTO city (city,countryId,createDate,createdBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}'); Select LAST_INSERT_ID();";
-            string newCountrySQL = "INSERT INTO country (country,createDate,createdBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}'); Select LAST_INSERT_ID();";
-
-            string inUpCustSQL = "Select customerId,customerName,active from customer where customerName='{0}'";
-            string inUpAddySQL = "Select addressId,address,address2,postalCode,phone from address WHERE address = '{0}' and address2 = '{1}'";
-            string inUpCitySQL = "Select cityId,city from city where city = '{0}'";
-            string inUpCountrySQL = "Select countryId,country from country WHERE country='{0}'";
-
-            string updateCustSQL = "update customer set customerName='{0}', active='{1}', lastUpdate='{2}', lastUpdateBy='{3}' where customerId = {4};";
-
-            string countryID = "";
-            string cityID = "";
-            string addressID = "";
-            string customerID = "";
-
-            Customer newTemp = new Customer();
-
-            newTemp.customerName = (dgCustomers.Columns[1].GetCellContent(e.Row) as TextBlock).Text;
-            newTemp.active = ((dgCustomers.Columns[2].GetCellContent(e.Row) as CheckBox).IsChecked == true) ? 1 : 0;
-            newTemp.address = (dgCustomers.Columns[3].GetCellContent(e.Row) as TextBlock).Text;
-            newTemp.address2 = (dgCustomers.Columns[4].GetCellContent(e.Row) as TextBlock).Text;
-            newTemp.city = (dgCustomers.Columns[5].GetCellContent(e.Row) as TextBlock).Text;
-            newTemp.country = (dgCustomers.Columns[7].GetCellContent(e.Row) as TextBlock).Text;
-            newTemp.zip = int.Parse((dgCustomers.Columns[6].GetCellContent(e.Row) as TextBlock).Text);
-            newTemp.phone = (dgCustomers.Columns[8].GetCellContent(e.Row) as TextBlock).Text;
-
-            var custCMD = new MySqlCommand(string.Format(updateCustSQL, newTemp.customerName,newTemp.active,DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"),"test", int.Parse((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text)), con);
-            MySqlDataReader custRDR = (MySqlDataReader)custCMD.ExecuteScalar();
-            
-            //custRDR.Close();
-
-            ///////////////////////////Begin Country Logic///////////////////////////
-            custCMD = new MySqlCommand(string.Format(inUpCountrySQL, newTemp.country), con);
-            custRDR = custCMD.ExecuteReader();
-            while (custRDR.Read())
+            if (e.EditAction == DataGridEditAction.Commit)
             {
-                countryID = custRDR.GetString(0);
-            }
-            custRDR.Close();
-            if (!int.TryParse(countryID, out int trash))
-            {
-                custCMD = new MySqlCommand(string.Format(newCountrySQL, newTemp.country, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
-                countryID = custCMD.ExecuteScalar().ToString(); // get inserted country ID
                 
+                Console.WriteLine((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text);
+                Console.WriteLine((e.Row.Item as Customer).customerName);
+                Console.WriteLine((dgCustomers.Columns[3].GetCellContent(e.Row) as TextBlock).Text);
+                Console.WriteLine((dgCustomers.Columns[4].GetCellContent(e.Row) as TextBlock).Text);
+                Console.WriteLine((dgCustomers.Columns[5].GetCellContent(e.Row) as TextBlock).Text);
+                Console.WriteLine((dgCustomers.Columns[6].GetCellContent(e.Row) as TextBlock).Text);
+                Console.WriteLine((dgCustomers.Columns[7].GetCellContent(e.Row) as TextBlock).Text);
+                Console.WriteLine((e.Row.Item as Customer).phone);
+
+                string newCustSQL = "INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}'); Select LAST_INSERT_ID();";
+                string newAddySQL = "INSERT INTO address (address,address2,cityId,postalCode,phone,createDate,CreatedBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}'); Select LAST_INSERT_ID();";
+                string newCitySQL = "INSERT INTO city (city,countryId,createDate,createdBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}'); Select LAST_INSERT_ID();";
+                string newCountrySQL = "INSERT INTO country (country,createDate,createdBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}'); Select LAST_INSERT_ID();";
+
+                string inUpCustSQL = "Select customerId,customerName,active from customer where customerName='{0}' and customerId='{1}'";
+                string inUpAddySQL = "Select addressId,address,address2,postalCode,phone from address WHERE address = '{0}' and address2 = '{1}'";
+                string inUpCitySQL = "Select cityId,city from city where city = '{0}'";
+                string inUpCountrySQL = "Select countryId,country from country WHERE country='{0}'";
+
+                string updateCustSQL = "update customer,address,city,country set customerName='{0}', active='{1}', customer.lastUpdate='{2}',address.lastUpdate='{2}',customer.lastUpdateBy='{3}', address.lastUpdateBy='{3}',address.phone='{4}',customer.addressId='{6}',address.cityId='{7}',address.postalCode='{8}',city.countryId='{9}' where customerId = {5} and address.addressId='{6}' and city.cityId='{7}' and country.countryId='{9}';";
+
+                string countryID = "";
+                string cityID = "";
+                string addressID = "";
+                string customerID = "";
+
+                Customer newTemp = new Customer();
+
+                newTemp = e.Row.Item as Customer;
+
+                /*newTemp.customerName = (dgCustomers.Columns[1].GetCellContent(e.Row) as TextBlock).Text;
+                newTemp.active = ((dgCustomers.Columns[2].GetCellContent(e.Row) as CheckBox).IsChecked == true) ? 1 : 0;
+                newTemp.address = (dgCustomers.Columns[3].GetCellContent(e.Row) as TextBlock).Text;
+                newTemp.address2 = (dgCustomers.Columns[4].GetCellContent(e.Row) as TextBlock).Text;
+                newTemp.city = (dgCustomers.Columns[5].GetCellContent(e.Row) as TextBlock).Text;
+                newTemp.country = (dgCustomers.Columns[7].GetCellContent(e.Row) as TextBlock).Text;
+                newTemp.zip = int.Parse((dgCustomers.Columns[6].GetCellContent(e.Row) as TextBlock).Text);
+                newTemp.phone = (e.Row.Item as Customer).phone;
+
+                var custCMD = new MySqlCommand(string.Format(updateCustSQL, newTemp.customerName, newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test",newTemp.phone, int.Parse((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text),(e.Row.Item as Customer).addressID), con);
+                MySqlDataReader custRDR = (MySqlDataReader)custCMD.ExecuteScalar();*/
+
+                //custRDR.Close();
+
+                ///////////////////////////Begin Country Logic///////////////////////////
+                var custCMD = new MySqlCommand(string.Format(inUpCountrySQL, newTemp.country), con);
+                MySqlDataReader custRDR = custCMD.ExecuteReader();
+                while (custRDR.Read())
+                {
+                    countryID = custRDR.GetString(0);
+                }
                 custRDR.Close();
-                
-            }
-            //////////////////////////End country logic///////////////////////
+                if (!int.TryParse(countryID, out int trash))
+                {
+                    custCMD = new MySqlCommand(string.Format(newCountrySQL, newTemp.country, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    countryID = custCMD.ExecuteScalar().ToString(); // get inserted country ID
 
-            ///////////////////////////Begin City Logic///////////////////////////
-            custCMD = new MySqlCommand(string.Format(inUpCitySQL, newTemp.city), con);
-            custRDR = custCMD.ExecuteReader();
-            while (custRDR.Read())
-            {
-                cityID = custRDR.GetString(0);
-            }
-            custRDR.Close();
-            if (!int.TryParse(cityID, out trash))
-            {
-                custCMD = new MySqlCommand(string.Format(newCitySQL, newTemp.city,countryID, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
-                cityID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
+                    custRDR.Close();
 
+                }
+                //////////////////////////End country logic///////////////////////
+
+                ///////////////////////////Begin City Logic///////////////////////////
+                custCMD = new MySqlCommand(string.Format(inUpCitySQL, newTemp.city), con);
+                custRDR = custCMD.ExecuteReader();
+                while (custRDR.Read())
+                {
+                    cityID = custRDR.GetString(0);
+                }
                 custRDR.Close();
+                if (!int.TryParse(cityID, out trash))
+                {
+                    custCMD = new MySqlCommand(string.Format(newCitySQL, newTemp.city, countryID, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    cityID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
 
-            }
-            //////////////////////////End City logic///////////////////////
+                    custRDR.Close();
 
-            ///////////////////////////Begin Address Logic///////////////////////////
-            custCMD = new MySqlCommand(string.Format(inUpAddySQL, newTemp.address, newTemp.address2), con);
-            custRDR = custCMD.ExecuteReader();
-            while (custRDR.Read())
-            {
-                addressID = custRDR.GetString(0);
-            }
-            custRDR.Close();
-            if (!int.TryParse(addressID, out trash))
-            {
-                custCMD = new MySqlCommand(string.Format(newAddySQL, newTemp.address,newTemp.address2,cityID,newTemp.zip,newTemp.phone, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
-                addressID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
+                }
+                //////////////////////////End City logic///////////////////////
 
+                ///////////////////////////Begin Address Logic///////////////////////////
+                custCMD = new MySqlCommand(string.Format(inUpAddySQL, newTemp.address, newTemp.address2), con);
+                custRDR = custCMD.ExecuteReader();
+                while (custRDR.Read())
+                {
+                    addressID = custRDR.GetString(0);
+                }
                 custRDR.Close();
+                if (!int.TryParse(addressID, out trash))
+                {
+                    custCMD = new MySqlCommand(string.Format(newAddySQL, newTemp.address, newTemp.address2, cityID, newTemp.zip, newTemp.phone, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    addressID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
 
-            }
-            //////////////////////////End Address logic///////////////////////
+                    custRDR.Close();
 
-            ///////////////////////////Begin Customer Logic///////////////////////////
-            custCMD = new MySqlCommand(string.Format(inUpCustSQL, newTemp.customerName), con);
-            custRDR = custCMD.ExecuteReader();
-            while (custRDR.Read())
-            {
-                customerID = custRDR.GetString(0);
-            }
-            custRDR.Close();
-            if (!int.TryParse(customerID, out trash))
-            {
-                custCMD = new MySqlCommand(string.Format(newCustSQL, newTemp.customerName, addressID,newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
-                customerID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
+                }
+                //////////////////////////End Address logic///////////////////////
 
+                ///////////////////////////Begin Customer Logic///////////////////////////
+                custCMD = new MySqlCommand(string.Format(inUpCustSQL, newTemp.customerName,(e.Row.Item as Customer).customerID), con);
+                custRDR = custCMD.ExecuteReader();
+                while (custRDR.Read())
+                {
+                    customerID = custRDR.GetString(0);
+                }
                 custRDR.Close();
+                if (!int.TryParse(customerID, out trash))
+                {
+                    custCMD = new MySqlCommand(string.Format(newCustSQL, newTemp.customerName, addressID, newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    customerID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
 
+                    custRDR.Close();
+
+                }
+                //////////////////////////End Customer logic///////////////////////
+
+                custCMD = new MySqlCommand(string.Format(updateCustSQL, newTemp.customerName, newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", newTemp.phone, int.Parse((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text), addressID,cityID,newTemp.zip,countryID), con);
+                custRDR = (MySqlDataReader)custCMD.ExecuteScalar();
+
+                GetCust();
             }
-            //////////////////////////End Customer logic///////////////////////
-
-            GetCust();
 
         }
 
         private void dgCustomers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Customer row = (sender as DataGrid).Items.CurrentItem as Customer;
+
         }
     }
 
