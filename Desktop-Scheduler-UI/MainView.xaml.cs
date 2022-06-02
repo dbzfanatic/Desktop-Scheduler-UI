@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -395,7 +396,6 @@ namespace Desktop_Scheduler_UI
                 results.Add(schedRDR.GetString(7) != "" ? " " + schedRDR.GetString(7) + " " : " ");
                 results.Add(schedRDR.GetString(6) + results[6] + schedRDR.GetString(8) + " " + schedRDR.GetString(9) + " " + schedRDR.GetString(10));
 
-
                 para.Inlines.Add(new Run("|" + results[0].PadRight(11).Substring(0,11) + "| |"));
                 para.Inlines.Add(new Run(results[1].PadRight(12).Substring(0, 12) + "| |"));
                 para.Inlines.Add(new Run(results[2].PadRight(13).Substring(0, 13) + "| |"));
@@ -573,6 +573,12 @@ namespace Desktop_Scheduler_UI
                 GetCust();
             }
 
+        }
+
+        private void btnAddApt_Click(object sender, RoutedEventArgs e)
+        {
+            AppointmentManager apptMan = new AppointmentManager();
+            apptMan.Show();
         }
     }
 

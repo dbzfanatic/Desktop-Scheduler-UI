@@ -77,7 +77,7 @@
                 <ComboBoxItem Content="All Schedules"/>
                 <ComboBoxItem Content="Appointments by Country"/>
             </ComboBox>
-            <Button x:Name="btnAddApt" Content="Appointment Manager" HorizontalAlignment="Left" Margin="255,15,0,0" VerticalAlignment="Top" Width="135" Grid.Row="1"/>
+            <Button x:Name="btnAddApt" Content="Appointment Manager" HorizontalAlignment="Left" Margin="255,15,0,0" VerticalAlignment="Top" Width="135" Grid.Row="1" Click="btnAddApt_Click"/>
             <Button x:Name="btnPrntRep" Content="Print Report" HorizontalAlignment="Left" Margin="160,15,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnPrntRep_Click"/>
         </Grid>
     </Grid>
