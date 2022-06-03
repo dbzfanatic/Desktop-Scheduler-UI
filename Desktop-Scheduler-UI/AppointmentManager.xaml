@@ -12,7 +12,7 @@
         </Grid.RowDefinitions>
         <DataGrid x:Name="dataGrid" Height="Auto" Width="Auto" CanUserResizeColumns="True" SelectedIndex="1" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridComboBoxColumn Header="Customer" Width="*" DisplayMemberPath="Name" SelectedValuePath="ID" CanUserReorder="False" ItemsSource="{Binding Source={x:Static local:AppointmentManager.cList}}" SelectedValueBinding="{Binding custData}"/>
+                <DataGridComboBoxColumn Header="Customer" Width="*" DisplayMemberPath="Name" SelectedValuePath="ID" CanUserReorder="False" ItemsSource="{Binding Source={x:Static local:AppointmentManager.cList}}" SelectedValueBinding="{Binding  custData[0]}" />
                 <DataGridTextColumn Binding="{Binding userId}" Width="*" CanUserReorder="False" Header="User" IsReadOnly="True" MaxWidth="40"/>
                 <DataGridTextColumn Binding="{Binding title}" Width="*" CanUserReorder="False" Header="Title" MaxWidth="55"/>
                 <DataGridTextColumn Binding="{Binding desc}" Width="*" CanUserReorder="False" Header="Description" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Hidden"/>

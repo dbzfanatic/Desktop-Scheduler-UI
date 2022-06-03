@@ -577,7 +577,7 @@ namespace Desktop_Scheduler_UI
 
         private void btnAddApt_Click(object sender, RoutedEventArgs e)
         {
-            AppointmentManager apptMan = new AppointmentManager();
+            AppointmentManager apptMan = new AppointmentManager(DateTime.Today,con);
             apptMan.Show();
         }
     }
