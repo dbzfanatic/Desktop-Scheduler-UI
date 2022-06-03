@@ -10,7 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid x:Name="dataGrid" Height="Auto" Width="Auto" CanUserResizeColumns="True" SelectedIndex="1" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" RowEditEnding="dataGrid_RowEditEnding" PreviewKeyDown="dataGrid_PreviewKeyDown">
+        <DataGrid x:Name="dataGrid" Height="Auto" Width="Auto" CanUserResizeColumns="True" SelectedIndex="1" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" RowEditEnding="dataGrid_RowEditEnding" PreviewKeyDown="dataGrid_PreviewKeyDown" BeginningEdit="dataGrid_BeginningEdit" CellEditEnding="dataGrid_CellEditEnding">
             <DataGrid.Columns>
                 <DataGridComboBoxColumn Header="Customer" Width="*" DisplayMemberPath="Name" SelectedValuePath="ID" CanUserReorder="False" ItemsSource="{Binding Source={x:Static local:AppointmentManager.cList}}" SelectedValueBinding="{Binding  custData, UpdateSourceTrigger=PropertyChanged}" />
                 <DataGridTextColumn Binding="{Binding userId, UpdateSourceTrigger=PropertyChanged}" Width="*" CanUserReorder="False" Header="User" IsReadOnly="True" MaxWidth="40"/>

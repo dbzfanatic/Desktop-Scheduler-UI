@@ -24,6 +24,7 @@ namespace Desktop_Scheduler_UI
         public static ObservableCollection<CustomerID> cList;
         public static ObservableCollection<Appointment> apps;
         MySqlConnection con;
+        private bool isEditing = false;
 
         public AppointmentManager() 
         {
@@ -171,17 +172,30 @@ namespace Desktop_Scheduler_UI
             switch (e.Key)
             {
                 case Key.Delete:
-                    if (MessageBox.Show("Are you sure you wish to delete this appointment?", "Delete Appointment?", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                    if (!isEditing)
                     {
-                        foreach (var row in grid.SelectedItems)
+                        if (MessageBox.Show("Are you sure you wish to delete this appointment?", "Delete Appointment?", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                         {
-                            //delete rows and update database
-                            var delCMD = new MySqlCommand(string.Format(delSQL, (row as Appointment).apptID), con);
-                            delCMD.ExecuteNonQuery();
+                            foreach (var row in grid.SelectedItems)
+                            {
+                                //delete rows and update database
+                                var delCMD = new MySqlCommand(string.Format(delSQL, (row as Appointment).apptID), con);
+                                delCMD.ExecuteNonQuery();
+                            }
                         }
                     }
                     break;
             }
+        }
+
+        private void dataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            isEditing = true;
+        }
+
+        private void dataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            isEditing = false;
         }
     }
 

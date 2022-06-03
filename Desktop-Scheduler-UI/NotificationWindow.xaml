@@ -1,0 +1,13 @@
+﻿<Window x:Class="Desktop_Scheduler_UI.NotificationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Desktop_Scheduler_UI"
+        mc:Ignorable="d"
+        Title="NotificationWindow" Height="192" Width="284" WindowStyle="None" Background="Transparent" Opacity="0.7">
+    <Grid>
+        <TextBlock x:Name="lblNotification" Margin="0" TextWrapping="Wrap" Text="Your appointment: {0} is starting soon. Please be ready by {1}" FontSize="22" Background="#FF3B8B9C"/>
+
+    </Grid>
+</Window>

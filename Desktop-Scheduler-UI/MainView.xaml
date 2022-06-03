@@ -46,7 +46,7 @@
                 <RowDefinition Height=".875*"/>
                 <RowDefinition Height=".125*"/>
             </Grid.RowDefinitions>
-            <DataGrid x:Name="dgCustomers" Margin="0" AutoGenerateColumns="False" CanUserReorderColumns="False" MouseUp="dgCustomers_MouseUp" PreviewKeyDown="dgCustomers_PreviewKeyDown" RowEditEnding="dgCustomers_RowEditEnding">
+            <DataGrid x:Name="dgCustomers" Margin="0" AutoGenerateColumns="False" CanUserReorderColumns="False" MouseUp="dgCustomers_MouseUp" PreviewKeyDown="dgCustomers_PreviewKeyDown" RowEditEnding="dgCustomers_RowEditEnding" BeginningEdit="dgCustomers_BeginningEdit" CellEditEnding="dgCustomers_CellEditEnding">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="Template">

@@ -17,7 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Windows.Xps.Packaging;
+using System.Windows.Threading;
 using MySql.Data.MySqlClient;
 
 namespace Desktop_Scheduler_UI
@@ -32,6 +32,9 @@ namespace Desktop_Scheduler_UI
         public static int curMonth = 1;
         public static int curYear = 2022;
         public static ObservableCollection<Customer> customers;
+        public List<DateTime> appointmentsToday = new List<DateTime>();
+        public List<String> appointentNamesToday = new List<string>();
+        private bool isEditing = false;
 
         public MainView()
         {
@@ -49,7 +52,10 @@ namespace Desktop_Scheduler_UI
             GetAppts(curMonth);
             GetCust();
 
-            
+            DispatcherTimer apptTimer = new DispatcherTimer();
+            apptTimer.Interval = TimeSpan.FromSeconds(5);
+            apptTimer.Tick += CheckApptTimes();
+            apptTimer.Start();
         }
 
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -128,20 +134,19 @@ namespace Desktop_Scheduler_UI
             switch(e.Key) 
             {
                 case Key.Delete:
-                    if (MessageBox.Show("Are you sure you wish to delete this customer?", "Delete Customer?", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                    if (!isEditing)
                     {
-                        foreach (var row in grid.SelectedItems)
+                        if (MessageBox.Show("Are you sure you wish to delete this customer?", "Delete Customer?", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                         {
-                            //delete rows and update database
-                            var delCMD = new MySqlCommand(string.Format(delSQL, (row as Customer).customerID), con);
-                            delCMD.ExecuteNonQuery();
+                            foreach (var row in grid.SelectedItems)
+                            {
+                                //delete rows and update database
+                                var delCMD = new MySqlCommand(string.Format(delSQL, (row as Customer).customerID), con);
+                                delCMD.ExecuteNonQuery();
+                            }
                         }
                     }
-                    break;
-                case Key.Enter:
-
-                    break;
-                
+                    break;                
             }
             
         }
@@ -222,6 +227,11 @@ namespace Desktop_Scheduler_UI
                         while (rdr.Read())
                         {
                             apptWeek[d] += "\n" + string.Format("{1} - {0}: {2}", rdr.GetString(1), rdr.GetString(0), DateTime.Parse(rdr.GetString(2)).ToLocalTime());
+                            if (dayOfMonth == DateTime.Today.Day)
+                            {
+                                appointmentsToday.Add(DateTime.Parse(rdr.GetString(2)).ToLocalTime());
+                                appointentNamesToday.Add(rdr.GetString(1));
+                            }
                         }
                         rdr.Close();
                     }
@@ -567,10 +577,39 @@ namespace Desktop_Scheduler_UI
 
         }
 
+        private EventHandler CheckApptTimes()
+        {
+            int iApt = 0;
+            if (appointmentsToday.Count > 0)
+            {
+                foreach (DateTime aptTime in appointmentsToday)
+                {
+                    if (aptTime <= DateTime.Now.AddMinutes(15))
+                    {
+                        Task.Run(()=> new NotificationWindow(appointentNamesToday[iApt], appointmentsToday[iApt].ToString("HH:mm")).Show());
+                        //notif.Show();
+                    }
+                    iApt++;
+                }
+            }
+
+            return null;
+        }
+
         private void btnAddApt_Click(object sender, RoutedEventArgs e)
         {
             AppointmentManager apptMan = new AppointmentManager(DateTime.Today,con);
             apptMan.Show();
+        }
+
+        private void dgCustomers_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            isEditing = true;
+        }
+
+        private void dgCustomers_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            isEditing = false;
         }
     }
 
