@@ -128,11 +128,14 @@ namespace Desktop_Scheduler_UI
             switch(e.Key) 
             {
                 case Key.Delete:
-                    foreach (var row in grid.SelectedItems)
+                    if (MessageBox.Show("Are you sure you wish to delete this customer?", "Delete Customer?", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                     {
-                        //delete rows and update database
-                        var delCMD = new MySqlCommand(string.Format(delSQL, (row as Customer).customerID),con);
-                        delCMD.ExecuteNonQuery();
+                        foreach (var row in grid.SelectedItems)
+                        {
+                            //delete rows and update database
+                            var delCMD = new MySqlCommand(string.Format(delSQL, (row as Customer).customerID), con);
+                            delCMD.ExecuteNonQuery();
+                        }
                     }
                     break;
                 case Key.Enter:
@@ -347,7 +350,6 @@ namespace Desktop_Scheduler_UI
                     break;
                 case 2:
                     reportByCountry();
-                    Console.WriteLine("test");
                     break;
                 default:
                     break;
@@ -463,16 +465,6 @@ namespace Desktop_Scheduler_UI
         {
             if (e.EditAction == DataGridEditAction.Commit)
             {
-                
-                Console.WriteLine((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text);
-                Console.WriteLine((e.Row.Item as Customer).customerName);
-                Console.WriteLine((dgCustomers.Columns[3].GetCellContent(e.Row) as TextBlock).Text);
-                Console.WriteLine((dgCustomers.Columns[4].GetCellContent(e.Row) as TextBlock).Text);
-                Console.WriteLine((dgCustomers.Columns[5].GetCellContent(e.Row) as TextBlock).Text);
-                Console.WriteLine((dgCustomers.Columns[6].GetCellContent(e.Row) as TextBlock).Text);
-                Console.WriteLine((dgCustomers.Columns[7].GetCellContent(e.Row) as TextBlock).Text);
-                Console.WriteLine((e.Row.Item as Customer).phone);
-
                 string newCustSQL = "INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}'); Select LAST_INSERT_ID();";
                 string newAddySQL = "INSERT INTO address (address,address2,cityId,postalCode,phone,createDate,CreatedBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}'); Select LAST_INSERT_ID();";
                 string newCitySQL = "INSERT INTO city (city,countryId,createDate,createdBy,lastUpdate,lastUpdateBy)  VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}'); Select LAST_INSERT_ID();";

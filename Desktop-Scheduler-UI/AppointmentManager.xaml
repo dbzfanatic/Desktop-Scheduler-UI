@@ -5,23 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop_Scheduler_UI"
         mc:Ignorable="d"
-        Title="AppointmentManager" Height="230" Width="770" WindowStyle="ToolWindow">
+        Title="Upcoming Appointments" Height="230" Width="770" WindowStyle="ToolWindow">
     <Grid x:Name="Grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid x:Name="dataGrid" Height="Auto" Width="Auto" CanUserResizeColumns="True" SelectedIndex="1" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged">
+        <DataGrid x:Name="dataGrid" Height="Auto" Width="Auto" CanUserResizeColumns="True" SelectedIndex="1" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" RowEditEnding="dataGrid_RowEditEnding" PreviewKeyDown="dataGrid_PreviewKeyDown">
             <DataGrid.Columns>
-                <DataGridComboBoxColumn Header="Customer" Width="*" DisplayMemberPath="Name" SelectedValuePath="ID" CanUserReorder="False" ItemsSource="{Binding Source={x:Static local:AppointmentManager.cList}}" SelectedValueBinding="{Binding  custData[0]}" />
-                <DataGridTextColumn Binding="{Binding userId}" Width="*" CanUserReorder="False" Header="User" IsReadOnly="True" MaxWidth="40"/>
-                <DataGridTextColumn Binding="{Binding title}" Width="*" CanUserReorder="False" Header="Title" MaxWidth="55"/>
-                <DataGridTextColumn Binding="{Binding desc}" Width="*" CanUserReorder="False" Header="Description" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Hidden"/>
-                <DataGridTextColumn Binding="{Binding location}" Width="*" CanUserReorder="False" Header="Location" MaxWidth="85"/>
-                <DataGridTextColumn Binding="{Binding contact}" Width="*" Header="Contact" MaxWidth="75"/>
-                <DataGridTextColumn Binding="{Binding type}" Width="*" Header="Type" MaxWidth="85"/>
-                <DataGridHyperlinkColumn Header="Meeting link" Width="*" Binding="{Binding url}"/>
-                <DataGridTextColumn Binding="{Binding start}" Width="*" CanUserReorder="False" Header="Start Time"/>
-                <DataGridTextColumn Binding="{Binding end}" Width="*" Header="End Time"/>
+                <DataGridComboBoxColumn Header="Customer" Width="*" DisplayMemberPath="Name" SelectedValuePath="ID" CanUserReorder="False" ItemsSource="{Binding Source={x:Static local:AppointmentManager.cList}}" SelectedValueBinding="{Binding  custData, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Binding="{Binding userId, UpdateSourceTrigger=PropertyChanged}" Width="*" CanUserReorder="False" Header="User" IsReadOnly="True" MaxWidth="40"/>
+                <DataGridTextColumn Binding="{Binding title, UpdateSourceTrigger=PropertyChanged}" Width="*" CanUserReorder="False" Header="Title" MaxWidth="55"/>
+                <DataGridTextColumn Binding="{Binding desc, UpdateSourceTrigger=PropertyChanged}" Width="*" CanUserReorder="False" Header="Description" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Hidden"/>
+                <DataGridTextColumn Binding="{Binding location, UpdateSourceTrigger=PropertyChanged}" Width="*" CanUserReorder="False" Header="Location" MaxWidth="85"/>
+                <DataGridTextColumn Binding="{Binding contact, UpdateSourceTrigger=PropertyChanged}" Width="*" Header="Contact" MaxWidth="75"/>
+                <DataGridTextColumn Binding="{Binding type, UpdateSourceTrigger=PropertyChanged}" Width="*" Header="Type" MaxWidth="85"/>
+                <DataGridHyperlinkColumn Header="Meeting link" Width="*" Binding="{Binding url, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Binding="{Binding start, UpdateSourceTrigger=PropertyChanged}" Width="*" CanUserReorder="False" Header="Start Time"/>
+                <DataGridTextColumn Binding="{Binding end, UpdateSourceTrigger=PropertyChanged}" Width="*" Header="End Time"/>
             </DataGrid.Columns>
         </DataGrid>
 
