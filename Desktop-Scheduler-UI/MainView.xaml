@@ -24,7 +24,7 @@
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem x:Name="ShowWeek" Header="Show this week's schedule" Click="ShowWeek_Click"/>
-                        <MenuItem Header="Edit schedule"/>
+                        <MenuItem x:Name="ShowAptMan" Header="Edit schedule" Click="ShowAptMan_Click"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>

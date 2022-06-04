@@ -64,7 +64,7 @@ namespace Desktop_Scheduler_UI
         {
             apps.Clear();
             DateTime today = dtToday;
-            string apptMgrSQL = "SELECT appointment.appointmentId, appointment.customerId,customer.customerName, appointment.userId, appointment.title, appointment.description, appointment.location, appointment.contact, appointment.type, appointment.url, appointment.start, appointment.end FROM appointment inner join customer WHERE appointment.userId=1 and customer.customerId = appointment.customerId and Date(appointment.start) > '" + today.Year + "-" + today.ToString("MM") + "-" + (int.Parse(today.ToString("dd"))-1) + "'";
+            string apptMgrSQL = "SELECT appointment.appointmentId, appointment.customerId,customer.customerName, appointment.userId, appointment.title, appointment.description, appointment.location, appointment.contact, appointment.type, appointment.url, appointment.start, appointment.end FROM appointment inner join customer WHERE appointment.userId=1 and customer.customerId = appointment.customerId and Date(appointment.start) >= '" + today.Year + "-" + today.ToString("MM") + "-" + (int.Parse(today.ToString("dd"))-1) + "'";
             var apptMgrCMD = new MySqlCommand(apptMgrSQL, con);
             MySqlDataReader rdr = apptMgrCMD.ExecuteReader();
             while (rdr.Read())
@@ -92,35 +92,39 @@ namespace Desktop_Scheduler_UI
                 DateTime rowStartTime = DateTime.Parse((e.Row.Item as Appointment).start.ToString("HH:mm:ss"));
                 DateTime rowEndTime = DateTime.Parse((e.Row.Item as Appointment).end.ToString("HH:mm:ss"));
 
-                foreach(var curItem in dataGrid.Items)
+                if (!CheckBusHours((e.Row.Item as Appointment).start))
+                {
+                    MessageBox.Show("Start time for appointment is outside normal business hours.", "Invalid Time");
+                    (dataGrid.Columns[8].GetCellContent(e.Row) as TextBlock).Background = Brushes.Red;
+                    return;
+                }
+                if (!CheckBusHours((e.Row.Item as Appointment).end))
+                {
+                    MessageBox.Show("End time for appointment is outside normal business hours.", "Invalid Time");
+                    (dataGrid.Columns[9].GetCellContent(e.Row) as TextBox).Background = Brushes.Red;
+                    return;
+                }
+
+                foreach (var curItem in dataGrid.Items)
                 {
                     if(curItem != e.Row.Item && curItem != CollectionView.NewItemPlaceholder)
                     {
                         Appointment temp = (curItem as Appointment);
                         DateTime tempStart = DateTime.Parse(temp.start.ToString("HH:mm:ss"));
-                        DateTime tempEnd = DateTime.Parse(temp.end.ToString("HH:mm:ss"));
-
-                        if (!CheckBusHours((e.Row.Item as Appointment).start))
-                        {
-                            MessageBox.Show("Start time for appointment is outside normal business hours.","Invalid Time");
-                            return;
-                        }
-                        if (!CheckBusHours((e.Row.Item as Appointment).end))
-                        {
-                            MessageBox.Show("End time for appointment is outside normal business hours.","Invalid Time");
-                            return;
-                        }
+                        DateTime tempEnd = DateTime.Parse(temp.end.ToString("HH:mm:ss"));                        
 
                         if (rowDate == temp.start.ToString("yyyy-MM-dd"))
                         {
                             if(tempStart.Ticks < rowStartTime.Ticks && rowStartTime.Ticks < tempEnd.Ticks)
                             {
                                 MessageBox.Show("Start time for appointment is during an existing appointment.", "Invalid Time");
+                                (dataGrid.Columns[8].GetCellContent(e.Row) as TextBox).Background = Brushes.Red;
                                 return;
                             }
                             if(rowEndTime.Ticks > tempStart.Ticks && rowEndTime.Ticks < tempEnd.Ticks)
                             {
                                 MessageBox.Show("End time for appointment is during an existing appointment.", "Invalid Time");
+                                (dataGrid.Columns[9].GetCellContent(e.Row) as TextBox).Background = Brushes.Red;
                                 return;
                             }
                         }
@@ -147,6 +151,11 @@ namespace Desktop_Scheduler_UI
                 string newSQL = string.Format(updateApptSQL, newTemp.custData,newTemp.title, newTemp.desc, newTemp.location, newTemp.contact, newTemp.type, newTemp.url, newTemp.start.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), newTemp.end.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"),"test", apptID);
                 aptChngCMD = new MySqlCommand(newSQL, con);
                 aptRDR = (MySqlDataReader)aptChngCMD.ExecuteScalar();
+
+                for (int i = 0; i < dataGrid.Items.Count - 2; i++) { //sub 2, one for index offset one for newitemplaceholder
+                    (dataGrid.Columns[8].GetCellContent(i) as TextBlock).Background = Brushes.White;
+                    (dataGrid.Columns[9].GetCellContent(i) as TextBlock).Background = Brushes.White;
+                }
 
                 GetComingAppts(DateTime.Today);
             }

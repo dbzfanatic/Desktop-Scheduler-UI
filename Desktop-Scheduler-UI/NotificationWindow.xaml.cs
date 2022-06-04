@@ -21,12 +21,7 @@ namespace Desktop_Scheduler_UI
     /// </summary>
     public partial class NotificationWindow : Window
     {
-        private DispatcherTimer timer;
-        private DispatcherTimer lifeTimer;
-
-        private int startXPos;
-        private int startYPos;
-        private int secPassed;
+        protected int targHeight = (int)(System.Windows.SystemParameters.PrimaryScreenHeight) - 290*2;
 
         private string alertName;
         private string alertTime;
@@ -39,66 +34,29 @@ namespace Desktop_Scheduler_UI
         public NotificationWindow(String aName, String aTime)
         {
 
-            InitializeComponent();
+            InitializeComponent();            
 
             alertName = aName;
             alertTime = aTime;
 
             Topmost = true;
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            //timer.Tick += timerTick();
-            timer.Start();
 
-            Timer test = new Timer(timerTick,null,100,0);
+            lblNotification.Text = string.Format("Your appointment, {0}, is starting soon. Please be ready at {1}.", alertName, alertTime);
 
-            lifeTimer = new DispatcherTimer();
-            lifeTimer.Interval = TimeSpan.FromSeconds(1);
-            lifeTimer.Tick += lifeTimerTick();
-            lifeTimer.Start();
+            Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => // lambda to invoke action to begin notification animation placement
+            {
+                var workingArea = System.Windows.SystemParameters.WorkArea; // get usable screen size/area
+                var transform = PresentationSource.FromVisual(this).CompositionTarget.TransformFromDevice; // get transform for window
+                var corner = transform.Transform(new Point(workingArea.Right, workingArea.Bottom));
 
-            startXPos = (int)(System.Windows.SystemParameters.PrimaryScreenWidth - Width - 10);
-            startYPos = (int)(System.Windows.SystemParameters.PrimaryScreenHeight);
-
-            Top = startYPos;
-            Left = startXPos;
-
-            lblNotification.Text = string.Format("Your appointment: {0} is starting soon. Please be ready by {1}", alertName, alertTime);
+                Left = corner.X - this.ActualWidth - 10;
+                Top = corner.Y - this.ActualHeight - 10;
+            }));
         }
 
-        private void frmNotWindow_Loaded(object sender, RoutedEventArgs e)
+        private void DoubleAnimationUsingKeyFrames_Completed(object sender, EventArgs e)
         {
-            
-        }
-
-        void timerTick(object state)
-        {
-            startYPos -= 5;
-            if (startYPos <= (int)(System.Windows.SystemParameters.PrimaryScreenHeight) - Height - 5)
-            {
-                timer.Stop();
-                Console.WriteLine("Stopped timer");
-            }
-            else
-            {
-                Top = startYPos;
-            }
-            return;
-        }
-
-        EventHandler lifeTimerTick()
-        {
-            Console.WriteLine("Seconds passed: " + secPassed);
-            if (secPassed >= 30)
-            {
-                this.Close();
-            }
-            else
-            {
-                secPassed++;
-            }
-
-            return null;
+            this.Close();
         }
     }
 }

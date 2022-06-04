@@ -584,10 +584,9 @@ namespace Desktop_Scheduler_UI
             {
                 foreach (DateTime aptTime in appointmentsToday)
                 {
-                    if (aptTime <= DateTime.Now.AddMinutes(15))
+                    if (aptTime <= DateTime.Now.AddMinutes(15) && aptTime > DateTime.Now)
                     {
-                        Task.Run(()=> new NotificationWindow(appointentNamesToday[iApt], appointmentsToday[iApt].ToString("HH:mm")).Show());
-                        //notif.Show();
+                        new NotificationWindow(appointentNamesToday[iApt], appointmentsToday[iApt].ToString("HH:mm tt")).Show();
                     }
                     iApt++;
                 }
@@ -610,6 +609,11 @@ namespace Desktop_Scheduler_UI
         private void dgCustomers_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             isEditing = false;
+        }
+
+        private void ShowAptMan_Click(object sender, RoutedEventArgs e)
+        {
+            btnAddApt_Click(null, null);
         }
     }
 

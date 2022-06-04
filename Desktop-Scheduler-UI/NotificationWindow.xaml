@@ -5,9 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop_Scheduler_UI"
         mc:Ignorable="d"
-        Title="NotificationWindow" Height="192" Width="284" WindowStyle="None" Background="Transparent" Opacity="0.7">
-    <Grid>
-        <TextBlock x:Name="lblNotification" Margin="0" TextWrapping="Wrap" Text="Your appointment: {0} is starting soon. Please be ready by {1}" FontSize="22" Background="#FF3B8B9C"/>
+        Title="NotificationWindow" Height="192" Width="284" WindowStyle="None" Background="Transparent" Opacity="0.7" AllowsTransparency="True" ShowInTaskbar="False">
+	<Grid RenderTransformOrigin="0,1">
+		<Grid.Triggers>
+			<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+				<BeginStoryboard>
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+							<SplineDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+							<SplineDoubleKeyFrame KeyTime="0:0:1" Value=".7"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Completed="DoubleAnimationUsingKeyFrames_Completed">
+							<SplineDoubleKeyFrame KeyTime="0:0:14" Value="1"/>
+							<SplineDoubleKeyFrame KeyTime="0:0:15" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+		</Grid.Triggers>
 
-    </Grid>
+		<Grid.RenderTransform>
+			<ScaleTransform ScaleY="1" />
+		</Grid.RenderTransform>
+		<TextBlock x:Name="lblNotification" Margin="0" TextWrapping="Wrap" Text="Your appointment: {0} is starting soon. Please be ready by {1}" FontSize="22" Background="#FF3B8B9C" TextAlignment="Justify"/>
+
+	</Grid>
 </Window>
