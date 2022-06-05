@@ -29,6 +29,9 @@ namespace Desktop_Scheduler_UI
     {
         List<string> supportedLanguages = new List<string> { "en-US", "fr-FR" };
         protected static MySqlConnection con;
+
+        public static User user = new User();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -83,11 +86,13 @@ namespace Desktop_Scheduler_UI
 
         private bool tryLogin(string userName, string passWord)
         {
-            MySqlCommand cmd = new MySqlCommand(string.Format("SELECT * FROM user WHERE userName='{0}' AND password='{1}'",userName,passWord),con);
-            string user = null;
+            MySqlCommand cmd = new MySqlCommand(string.Format("SELECT userId,userName FROM user WHERE userName='{0}' AND password='{1}' and active='1'",userName,passWord),con);
+            
             try
             {
-                user = cmd.ExecuteScalar().ToString(); //use executescalar because we only need to know if a record is found
+                MySqlDataReader usrRDR =  cmd.ExecuteReader();
+                user.ID = usrRDR.GetInt32(0);
+                user.Name = usrRDR.GetString(1);
             }
             catch
             {
@@ -127,6 +132,22 @@ namespace Desktop_Scheduler_UI
             {
                 databaseLogic();
             }
+        }
+    }
+
+    public class User
+    {
+        private int userID { get; set; }
+        private string userName { get; set; }
+
+        public int ID {
+            get  => userID;
+            set => userID = value;
+        }
+        public string Name 
+        {
+            get => userName;
+            set => userName = value;
         }
     }
 }

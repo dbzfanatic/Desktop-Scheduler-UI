@@ -28,7 +28,7 @@ namespace Desktop_Scheduler_UI
             InitializeComponent();
 
             DateTime today = DateTime.Today;
-            var sql = "SELECT * FROM appointment inner join customer ON appointment.customerID = customer.customerId inner join address on customer.addressID = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId WHERE appointment.userId=1 and appointment.start between '" + MainView.curYear + "-" + MainView.curMonth + "-" + "{0}' and '" + MainView.curYear + "-" + MainView.curMonth + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
+            var sql = "SELECT * FROM appointment inner join customer ON appointment.customerID = customer.customerId inner join address on customer.addressID = address.addressId inner join city on address.cityId = city.cityId inner join country on city.countryId = country.countryId WHERE appointment.userId='{1}' and appointment.start between '" + MainView.curYear + "-" + MainView.curMonth + "-" + "{0}' and '" + MainView.curYear + "-" + MainView.curMonth + "-" + "{0} 23:59:59'"; //prepared appt lookup SQL string formatted for string.format
 
 
             string[] weekDays = new string[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
@@ -45,7 +45,7 @@ namespace Desktop_Scheduler_UI
                     dayOfMonth = int.Parse((days[i]).Split(null, 2)[0]);
                 }
 
-                var cmd = new MySqlCommand(string.Format(sql, dayOfMonth), con);
+                var cmd = new MySqlCommand(string.Format(sql, dayOfMonth,MainWindow.user.ID), con);
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {

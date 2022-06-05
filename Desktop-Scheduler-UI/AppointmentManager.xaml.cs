@@ -141,14 +141,14 @@ namespace Desktop_Scheduler_UI
                 aptRDR.Close();
                 if (!int.TryParse(apptID, out int trash))
                 {
-                    aptChngCMD = new MySqlCommand(string.Format(newApptSQL, newTemp.custData,1,newTemp.title,newTemp.desc,newTemp.location,newTemp.contact,newTemp.type,newTemp.url, newTemp.start.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), newTemp.end.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    aptChngCMD = new MySqlCommand(string.Format(newApptSQL, newTemp.custData,MainWindow.user.ID,newTemp.title,newTemp.desc,newTemp.location,newTemp.contact,newTemp.type,newTemp.url, newTemp.start.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), newTemp.end.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name), con);
                     apptID = aptChngCMD.ExecuteScalar().ToString(); // get inserted country ID
 
                     aptRDR.Close();
 
                 }
 
-                string newSQL = string.Format(updateApptSQL, newTemp.custData,newTemp.title, newTemp.desc, newTemp.location, newTemp.contact, newTemp.type, newTemp.url, newTemp.start.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), newTemp.end.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"),"test", apptID);
+                string newSQL = string.Format(updateApptSQL, newTemp.custData,newTemp.title, newTemp.desc, newTemp.location, newTemp.contact, newTemp.type, newTemp.url, newTemp.start.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), newTemp.end.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"),MainWindow.user.Name, apptID);
                 aptChngCMD = new MySqlCommand(newSQL, con);
                 aptRDR = (MySqlDataReader)aptChngCMD.ExecuteScalar();
 

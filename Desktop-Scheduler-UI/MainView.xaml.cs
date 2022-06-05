@@ -507,7 +507,7 @@ namespace Desktop_Scheduler_UI
                 custRDR.Close();
                 if (!int.TryParse(countryID, out int trash))
                 {
-                    custCMD = new MySqlCommand(string.Format(newCountrySQL, newTemp.country, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    custCMD = new MySqlCommand(string.Format(newCountrySQL, newTemp.country, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name), con);
                     countryID = custCMD.ExecuteScalar().ToString(); // get inserted country ID
 
                     custRDR.Close();
@@ -525,7 +525,7 @@ namespace Desktop_Scheduler_UI
                 custRDR.Close();
                 if (!int.TryParse(cityID, out trash))
                 {
-                    custCMD = new MySqlCommand(string.Format(newCitySQL, newTemp.city, countryID, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    custCMD = new MySqlCommand(string.Format(newCitySQL, newTemp.city, countryID, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name), con);
                     cityID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
 
                     custRDR.Close();
@@ -543,7 +543,7 @@ namespace Desktop_Scheduler_UI
                 custRDR.Close();
                 if (!int.TryParse(addressID, out trash))
                 {
-                    custCMD = new MySqlCommand(string.Format(newAddySQL, newTemp.address, newTemp.address2, cityID, newTemp.zip, newTemp.phone, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    custCMD = new MySqlCommand(string.Format(newAddySQL, newTemp.address, newTemp.address2, cityID, newTemp.zip, newTemp.phone, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name), con);
                     addressID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
 
                     custRDR.Close();
@@ -561,7 +561,7 @@ namespace Desktop_Scheduler_UI
                 custRDR.Close();
                 if (!int.TryParse(customerID, out trash))
                 {
-                    custCMD = new MySqlCommand(string.Format(newCustSQL, newTemp.customerName, addressID, newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test"), con);
+                    custCMD = new MySqlCommand(string.Format(newCustSQL, newTemp.customerName, addressID, newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name), con);
                     customerID = custCMD.ExecuteScalar().ToString(); // get inserted city ID
 
                     custRDR.Close();
@@ -569,7 +569,7 @@ namespace Desktop_Scheduler_UI
                 }
                 //////////////////////////End Customer logic///////////////////////
 
-                custCMD = new MySqlCommand(string.Format(updateCustSQL, newTemp.customerName, newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), "test", newTemp.phone, int.Parse((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text), addressID,cityID,newTemp.zip,countryID), con);
+                custCMD = new MySqlCommand(string.Format(updateCustSQL, newTemp.customerName, newTemp.active, DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), MainWindow.user.Name, newTemp.phone, int.Parse((dgCustomers.Columns[0].GetCellContent(e.Row) as TextBlock).Text), addressID,cityID,newTemp.zip,countryID), con);
                 custRDR = (MySqlDataReader)custCMD.ExecuteScalar();
 
                 GetCust();
