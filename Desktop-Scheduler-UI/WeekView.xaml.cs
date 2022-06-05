@@ -49,7 +49,7 @@ namespace Desktop_Scheduler_UI
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {
-                    apptString += string.Format("{1} - {0}: {2}\t\tLocation: {3}: {6} {7}, {9} {8} {10}\t{4} for {5}\n", rdr.GetString(3), rdr.GetString(6), DateTime.Parse(rdr.GetString(9)).ToLocalTime(), rdr.GetString(5), rdr.GetString(7), rdr.GetString(16),rdr.GetString(24), rdr.GetString(25), rdr.GetString(27),rdr.GetString(34),rdr.GetString(41));
+                    apptString += string.Format("{1} - {0}: {2}\t\tLocation: {3}: {6} {7}, {9} {8} {10}\t{4} with/for {5}\n", rdr.GetString(3), rdr.GetString(6), DateTime.Parse(rdr.GetString(9)).ToLocalTime(), rdr.GetString(5), rdr.GetString(7), rdr.GetString(16),rdr.GetString(24), rdr.GetString(25), rdr.GetString(27),rdr.GetString(34),rdr.GetString(41));
                 }
                 rdr.Close();
 

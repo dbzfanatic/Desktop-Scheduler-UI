@@ -111,7 +111,10 @@ namespace Desktop_Scheduler_UI
                     {
                         Appointment temp = (curItem as Appointment);
                         DateTime tempStart = DateTime.Parse(temp.start.ToString("HH:mm:ss"));
-                        DateTime tempEnd = DateTime.Parse(temp.end.ToString("HH:mm:ss"));                        
+                        DateTime tempEnd = DateTime.Parse(temp.end.ToString("HH:mm:ss"));
+
+                        (dataGrid.Columns[8].GetCellContent(e.Row) as TextBlock).Background = Brushes.White;
+                        (dataGrid.Columns[9].GetCellContent(e.Row) as TextBlock).Background = Brushes.White;
 
                         if (rowDate == temp.start.ToString("yyyy-MM-dd"))
                         {
@@ -151,11 +154,6 @@ namespace Desktop_Scheduler_UI
                 string newSQL = string.Format(updateApptSQL, newTemp.custData,newTemp.title, newTemp.desc, newTemp.location, newTemp.contact, newTemp.type, newTemp.url, newTemp.start.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), newTemp.end.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"), DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"),MainWindow.user.Name, apptID);
                 aptChngCMD = new MySqlCommand(newSQL, con);
                 aptRDR = (MySqlDataReader)aptChngCMD.ExecuteScalar();
-
-                for (int i = 0; i < dataGrid.Items.Count - 2; i++) { //sub 2, one for index offset one for newitemplaceholder
-                    (dataGrid.Columns[8].GetCellContent(i) as TextBlock).Background = Brushes.White;
-                    (dataGrid.Columns[9].GetCellContent(i) as TextBlock).Background = Brushes.White;
-                }
 
                 GetComingAppts(DateTime.Today);
             }

@@ -86,18 +86,19 @@ namespace Desktop_Scheduler_UI
 
         private bool tryLogin(string userName, string passWord)
         {
-            MySqlCommand cmd = new MySqlCommand(string.Format("SELECT userId,userName FROM user WHERE userName='{0}' AND password='{1}' and active='1'",userName,passWord),con);
-            
+            MySqlCommand cmd = new MySqlCommand(string.Format("SELECT userId FROM user WHERE userName='{0}' AND password='{1}' and active='1'",userName,passWord),con);
+            MySqlCommand usr = new MySqlCommand(string.Format("SELECT userName FROM user WHERE userName='{0}' AND password='{1}' and active='1'", userName, passWord), con);
             try
             {
-                MySqlDataReader usrRDR =  cmd.ExecuteReader();
-                user.ID = usrRDR.GetInt32(0);
-                user.Name = usrRDR.GetString(1);
+                //MySqlDataReader usrRDR =  cmd.ExecuteScalar();
+                user.ID = (int)cmd.ExecuteScalar();
+                user.Name = (string)usr.ExecuteScalar();
             }
             catch
             {
                 return false;
-            }            
+            }     
+            
             return true;
         }
 
